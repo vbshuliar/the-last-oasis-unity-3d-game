@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
@@ -26,7 +25,7 @@ public class PlayerController : MonoBehaviour
     float lookRotationSpeed = 8f;
     Vector3 lastMoveDirection;
 
-    float clickInterval = 0.2f; // 200ms in seconds
+    float clickInterval = 0.2f;
     float lastClickTime = 0f;
 
     [Header("Attack")]
@@ -40,7 +39,6 @@ public class PlayerController : MonoBehaviour
     Interactable target;
     float attackAnimationLength = 0f;
 
-    // Power-up tracking
     bool isPoweredUp = false;
     Vector3 originalScale;
     float originalSpeed;
@@ -52,38 +50,27 @@ public class PlayerController : MonoBehaviour
         actor = GetComponent<Actor>();
 
         input = new CustomActions();
-        AssignInputs();
     }
 
     void Start()
     {
-        // Get the actual length of the attack animation
         RuntimeAnimatorController ac = animator.runtimeAnimatorController;
         foreach (AnimationClip clip in ac.animationClips)
         {
             if (clip.name == ATTACK)
             {
                 attackAnimationLength = clip.length;
-                Debug.Log($"Attack animation found: {clip.name}, Length: {attackAnimationLength} seconds");
                 break;
             }
         }
 
-        // Fallback if animation not found
         if (attackAnimationLength == 0f)
         {
             attackAnimationLength = 1f;
-            Debug.LogWarning("Attack animation not found, using default length of 1 second");
         }
 
-        // Store original values for power-ups
         originalScale = transform.localScale;
         originalSpeed = agent.speed;
-    }
-
-    void AssignInputs()
-    {
-        // Input will be handled in Update for hold-to-click support
     }
 
     void ClickToMove()
@@ -116,7 +103,6 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        // Stop all actions if player is dead
         if (actor != null && actor.currentHealth <= 0)
         {
             agent.SetDestination(transform.position);
@@ -131,16 +117,13 @@ public class PlayerController : MonoBehaviour
 
     void HandleMouseInput()
     {
-        // Check if Mouse.current is available
         if (Mouse.current == null) return;
 
-        // First press - execute immediately
         if (Mouse.current.rightButton.wasPressedThisFrame)
         {
             ClickToMove();
             lastClickTime = Time.time;
         }
-        // While holding - execute every 200ms
         else if (Mouse.current.rightButton.isPressed)
         {
             float timeSinceLastClick = Time.time - lastClickTime;
@@ -166,28 +149,24 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 facing = Vector3.zero;
 
-        // If we have a target (enemy/item), face that
         if (target != null)
         {
             facing = target.transform.position;
         }
-        // Otherwise, use actual movement direction for smooth rotation
         else
         {
-            // Only update direction if moving
             if (agent.velocity.sqrMagnitude > 0.1f)
             {
                 lastMoveDirection = agent.velocity.normalized;
             }
 
-            // If we have a valid last direction, use it
             if (lastMoveDirection != Vector3.zero)
             {
                 facing = transform.position + lastMoveDirection;
             }
             else
             {
-                return; // No direction to face
+                return;
             }
         }
 
@@ -207,23 +186,16 @@ public class PlayerController : MonoBehaviour
         switch (target.interactionType)
         {
             case InteractableType.Enemy:
-
-                // Set animator speed to control attack animation playback speed
                 animator.speed = attackSpeed;
-                // Play attack from the start (layer 0, normalized time 0) - ensures full animation every hit
                 animator.Play(ATTACK, 0, 0f);
 
-                // Calculate timing based on actual animation length and attack speed
                 float attackDuration = attackAnimationLength / attackSpeed;
                 float delayToHit = attackDelay / attackSpeed;
 
-                // Send damage at the specified delay point in the animation
                 Invoke(nameof(SendAttack), delayToHit);
-                // Reset after the full animation completes
                 Invoke(nameof(ResetBusyState), attackDuration);
                 break;
             case InteractableType.Item:
-
                 target.InteractWithItem(this);
                 target = null;
 
@@ -236,7 +208,6 @@ public class PlayerController : MonoBehaviour
     {
         if (target == null) return;
 
-        // Don't attack if player is dead
         if (actor != null && actor.currentHealth <= 0) return;
 
         if (target.myActor.currentHealth <= 0)
@@ -249,7 +220,7 @@ public class PlayerController : MonoBehaviour
     void ResetBusyState()
     {
         playerBusy = false;
-        animator.speed = 1f; // Reset animator speed to normal
+        animator.speed = 1f;
         SetAnimations();
     }
 
@@ -257,7 +228,6 @@ public class PlayerController : MonoBehaviour
     {
         if (playerBusy) return;
 
-        // Check if agent is moving (using velocity magnitude for better accuracy)
         if (agent.velocity.magnitude > 0.1f)
         { animator.Play(WALK); }
         else
@@ -266,7 +236,6 @@ public class PlayerController : MonoBehaviour
 
     public void ApplyGreenPotionEffect(float sizeMultiplier, float speedMultiplier, float duration)
     {
-        // If already powered up, stop the current coroutine
         if (isPoweredUp)
         {
             StopCoroutine("PowerUpCoroutine");
@@ -279,21 +248,14 @@ public class PlayerController : MonoBehaviour
     {
         isPoweredUp = true;
 
-        // Apply power-up effects
         transform.localScale = originalScale * sizeMultiplier;
         agent.speed = originalSpeed * speedMultiplier;
 
-        Debug.Log($"Power-up activated! Size: {sizeMultiplier}x, Speed: {speedMultiplier}x for {duration} seconds");
-
-        // Wait for duration
         yield return new WaitForSeconds(duration);
 
-        // Revert to original values
         transform.localScale = originalScale;
         agent.speed = originalSpeed;
 
         isPoweredUp = false;
-
-        Debug.Log("Power-up expired. Returned to normal.");
     }
 }
