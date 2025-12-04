@@ -1,38 +1,65 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-// basic enemy ai that chases and attacks the player using navmesh pathfinding
-public class EnemyAI : MonoBehaviour
+public class FastEnemyAI : MonoBehaviour
 {
     const string IDLE = "Idle";
     const string WALK = "Walk";
     const string ATTACK = "Attack";
 
     [Header("Combat Settings")]
-    [SerializeField] float detectionRange = 10f;
-    [SerializeField] float attackRange = 1.5f;
-    [SerializeField] int attackDamage = 1;
-    [SerializeField] float attackSpeed = 1.0f;
-    [SerializeField] float attackDelay = 0.3f;
-    [SerializeField] ParticleSystem hitEffect;
+    [SerializeField] private float detectionRange = 12f;
+    [SerializeField] private float attackRange = 1.5f;
+    [SerializeField] private int attackDamage = 1;
+    [SerializeField] private float attackSpeed = 1.2f;
+    [SerializeField] private float attackDelay = 0.2f;
+    [SerializeField] private ParticleSystem hitEffect;
 
-    [Header("Movement")]
-    [SerializeField] float rotationSpeed = 5f;
+    [Header("Steering")]
+    [SerializeField] private PursuitBehaviour pursuitBehaviour;
+    [SerializeField] private ObstacleAvoidanceBehaviour obstacleAvoidanceBehaviour;
 
-    Transform player;
-    NavMeshAgent agent;
-    Animator animator;
-    Actor actor;
+    private Transform player;
+    private NavMeshAgent agent;
+    private Animator animator;
+    private Actor actor;
+    private Rigidbody rb;
 
-    bool isAttacking = false;
-    float attackAnimationLength = 0f;
-    float lastAttackTime = 0f;
+    private bool isAttacking = false;
+    private float attackAnimationLength = 0f;
+    private float lastAttackTime = 0f;
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         actor = GetComponent<Actor>();
+        rb = GetComponent<Rigidbody>();
+
+        if (rb == null)
+        {
+            rb = gameObject.AddComponent<Rigidbody>();
+            rb.isKinematic = true;
+        }
+
+        // Get or add steering behaviours
+        if (pursuitBehaviour == null)
+        {
+            pursuitBehaviour = GetComponent<PursuitBehaviour>();
+            if (pursuitBehaviour == null)
+            {
+                pursuitBehaviour = gameObject.AddComponent<PursuitBehaviour>();
+            }
+        }
+
+        if (obstacleAvoidanceBehaviour == null)
+        {
+            obstacleAvoidanceBehaviour = GetComponent<ObstacleAvoidanceBehaviour>();
+            if (obstacleAvoidanceBehaviour == null)
+            {
+                obstacleAvoidanceBehaviour = gameObject.AddComponent<ObstacleAvoidanceBehaviour>();
+            }
+        }
     }
 
     void Start()
@@ -41,9 +68,18 @@ public class EnemyAI : MonoBehaviour
         if (playerObj != null)
         {
             player = playerObj.transform;
+            if (pursuitBehaviour != null)
+            {
+                pursuitBehaviour.SetTarget(player);
+            }
         }
 
-        // find attack animation length by searching through all animation clips
+        // Fast enemy has higher speed
+        if (agent != null)
+        {
+            agent.speed *= 1.5f;
+        }
+
         if (animator != null)
         {
             RuntimeAnimatorController ac = animator.runtimeAnimatorController;
@@ -62,18 +98,9 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
-        // subscribe to death event to notify gamemanager when enemy dies
         if (actor != null)
         {
             actor.OnDeath += OnEnemyDeath;
-        }
-    }
-
-    void OnEnemyDeath(Actor deadActor)
-    {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.AddKill();
         }
     }
 
@@ -94,23 +121,52 @@ public class EnemyAI : MonoBehaviour
             }
             else
             {
-                agent.SetDestination(player.position);
+                // Use pursuit steering to chase player
+                ApplyPursuitSteering();
             }
         }
 
         SetAnimations();
     }
 
+    void ApplyPursuitSteering()
+    {
+        if (pursuitBehaviour != null)
+        {
+            Vector3 pursuitForce = pursuitBehaviour.CalculateForce();
+            
+            // Combine with obstacle avoidance
+            Vector3 avoidanceForce = Vector3.zero;
+            if (obstacleAvoidanceBehaviour != null)
+            {
+                avoidanceForce = obstacleAvoidanceBehaviour.CalculateForce();
+            }
+
+            Vector3 combinedForce = pursuitForce + avoidanceForce;
+            Vector3 newPosition = transform.position + combinedForce * Time.deltaTime;
+            
+            // Use NavMesh to validate and set destination
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(newPosition, out hit, 2f, NavMesh.AllAreas))
+            {
+                agent.SetDestination(hit.position);
+            }
+        }
+        else
+        {
+            agent.SetDestination(player.position);
+        }
+    }
+
     void FacePlayer()
     {
         Vector3 direction = (player.position - transform.position).normalized;
-        direction.y = 0; // keep rotation on horizontal plane only
+        direction.y = 0;
 
         if (direction != Vector3.zero)
         {
-            // smoothly rotate to face player using quaternion slerp
             Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 8f);
         }
     }
 
@@ -133,7 +189,6 @@ public class EnemyAI : MonoBehaviour
         float delayToHit = attackDelay / attackSpeed;
         float attackDuration = attackAnimationLength / attackSpeed;
 
-        // invoke calls methods after a delay damage happens partway through animation
         Invoke(nameof(DealDamage), delayToHit);
         Invoke(nameof(ResetAttack), attackDuration);
     }
@@ -183,13 +238,12 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    void OnDrawGizmosSelected()
+    void OnEnemyDeath(Actor deadActor)
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRange);
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddKill();
+        }
     }
 
     void OnDestroy()
@@ -200,3 +254,4 @@ public class EnemyAI : MonoBehaviour
         }
     }
 }
+

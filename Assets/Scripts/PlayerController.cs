@@ -3,14 +3,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
 
+// handles player movement attacking and item pickup using click to move controls
 public class PlayerController : MonoBehaviour
 {
     const string IDLE = "Idle";
     const string WALK = "Walk";
     const string ATTACK = "Attack";
     const string PICKUP = "Pickup";
-
-    string currentAnimation;
 
     CustomActions input;
 
@@ -54,6 +53,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        // loop through all animations to find attack animation length
         RuntimeAnimatorController ac = animator.runtimeAnimatorController;
         foreach (AnimationClip clip in ac.animationClips)
         {
@@ -71,10 +71,30 @@ public class PlayerController : MonoBehaviour
 
         originalScale = transform.localScale;
         originalSpeed = agent.speed;
+
+        // subscribe to death event so we know when player dies
+        if (actor != null)
+        {
+            actor.OnDeath += OnPlayerDeath;
+        }
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StartGame();
+        }
+    }
+
+    void OnPlayerDeath(Actor deadActor)
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.GameOver();
+        }
     }
 
     void ClickToMove()
     {
+        // raycast shoots invisible line from camera through mouse position to see what was clicked
         RaycastHit hit;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100, clickableLayers))
         {
@@ -87,8 +107,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 target = null;
-
-                agent.destination = hit.point;
+                agent.destination = hit.point; // navmesh agent automatically finds path to destination
                 if (clickEffect != null)
                 { Instantiate(clickEffect, hit.point + new Vector3(0, 0.1f, 0), clickEffect.transform.rotation); }
             }
@@ -103,7 +122,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (actor != null && actor.currentHealth <= 0)
+        if (actor != null && !actor.IsAlive())
         {
             agent.SetDestination(transform.position);
             return;
@@ -170,6 +189,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        // smoothly rotate to face target using quaternion slerp spherical interpolation
         Vector3 direction = (facing - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * lookRotationSpeed);
@@ -192,6 +212,7 @@ public class PlayerController : MonoBehaviour
                 float attackDuration = attackAnimationLength / attackSpeed;
                 float delayToHit = attackDelay / attackSpeed;
 
+                // invoke calls a method after a delay damage happens partway through animation
                 Invoke(nameof(SendAttack), delayToHit);
                 Invoke(nameof(ResetBusyState), attackDuration);
                 break;
@@ -208,9 +229,9 @@ public class PlayerController : MonoBehaviour
     {
         if (target == null) return;
 
-        if (actor != null && actor.currentHealth <= 0) return;
+        if (actor != null && !actor.IsAlive()) return;
 
-        if (target.myActor.currentHealth <= 0)
+        if (target.myActor != null && !target.myActor.IsAlive())
         { target = null; return; }
 
         Instantiate(hitEffect, target.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
@@ -244,6 +265,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(PowerUpCoroutine(sizeMultiplier, speedMultiplier, duration));
     }
 
+    // coroutine runs over multiple frames can wait for time to pass
     IEnumerator PowerUpCoroutine(float sizeMultiplier, float speedMultiplier, float duration)
     {
         isPoweredUp = true;
@@ -251,11 +273,19 @@ public class PlayerController : MonoBehaviour
         transform.localScale = originalScale * sizeMultiplier;
         agent.speed = originalSpeed * speedMultiplier;
 
-        yield return new WaitForSeconds(duration);
+        yield return new WaitForSeconds(duration); // wait for duration seconds
 
         transform.localScale = originalScale;
         agent.speed = originalSpeed;
 
         isPoweredUp = false;
+    }
+
+    void OnDestroy()
+    {
+        if (actor != null)
+        {
+            actor.OnDeath -= OnPlayerDeath;
+        }
     }
 }
