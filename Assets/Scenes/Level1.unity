@@ -1707,7 +1707,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 127279d577f25ac4ea17dae3782e5074, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2746,17 +2746,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 488e23cc9a3584140b2280e97d9d59a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
-  musicSource: {fileID: 0}
-  sfxSource: {fileID: 0}
-  backgroundMusic: {fileID: 0}
-  playerAttackSound: {fileID: 0}
-  enemyAttackSound: {fileID: 0}
-  itemPickupSound: {fileID: 0}
-  playerHurtSound: {fileID: 0}
-  enemyDeathSound: {fileID: 0}
-  footstepSound: {fileID: 0}
-  musicVolume: 0.7
-  sfxVolume: 0.8
 --- !u!4 &467932186
 Transform:
   m_ObjectHideFlags: 0
@@ -3328,16 +3317,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fdb0b8f88735364d8babadc2dba6e3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EndMenuController
-  endMenuPanel: {fileID: 176356344}
-  titleText: {fileID: 1225737507}
-  scoreText: {fileID: 384466795}
-  timeText: {fileID: 2126893106}
-  killsText: {fileID: 1156073535}
-  highScoreText: {fileID: 21480468}
-  restartButton: {fileID: 1432891948}
-  mainMenuButton: {fileID: 304805940}
-  quitButton: {fileID: 349177524}
-  mainMenuSceneName: MainMenu
 --- !u!4 &579806247
 Transform:
   m_ObjectHideFlags: 0
@@ -5584,13 +5563,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51bdeb1d6ca5eb64f88da9d1780f5942, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenuController
-  pauseMenuPanel: {fileID: 1100237440}
-  resumeButton: {fileID: 512540319}
-  restartButton: {fileID: 736764645}
-  mainMenuButton: {fileID: 1494804548}
-  quitButton: {fileID: 2005739652}
-  mainMenuSceneName: MainMenu
-  optionsMenuPanel: {fileID: 0}
 --- !u!4 &1119286528
 Transform:
   m_ObjectHideFlags: 0
@@ -6138,12 +6110,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e08e0a1b86c59ad42adc9ce1667f44d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
-  healthBar: {fileID: 331515314}
-  timerText: {fileID: 209380201}
-  scoreText: {fileID: 603343756}
-  killsText: {fileID: 396781352}
-  itemsText: {fileID: 186267725}
-  playerActor: {fileID: 1156329866}
 --- !u!4 &1188674259
 Transform:
   m_ObjectHideFlags: 0
@@ -7780,8 +7746,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3745976a158c0e546a5f0b722d75f3bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneTransitionManager
-  fadeDuration: 1
-  fadeImage: {fileID: 0}
 --- !u!4 &1926269756
 Transform:
   m_ObjectHideFlags: 0
@@ -8368,11 +8332,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a27ff652713fea5418f30b1585bde4cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  gameDuration: 300
-  currentDifficulty: 0
-  pointsPerKill: 10
-  pointsPerSecond: 1
-  pointsPerPickup: 5
 --- !u!4 &1995530902
 Transform:
   m_ObjectHideFlags: 0
