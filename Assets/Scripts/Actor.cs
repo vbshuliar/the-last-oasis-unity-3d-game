@@ -5,7 +5,7 @@ using UnityEngine;
 public class Actor : MonoBehaviour
 {
     public int maxHealth;
-    public int currentHealth { get; private set; } // private set means only this class can change it
+    public int currentHealth { get; private set; }
 
     // events notify other scripts when health changes or actor dies
     public event Action<Actor> OnDeath;
@@ -23,7 +23,8 @@ public class Actor : MonoBehaviour
         if (currentHealth <= 0) return;
 
         currentHealth -= amount;
-        currentHealth = Mathf.Max(0, currentHealth); // mathf max ensures health never goes below 0
+        // make sure health never goes below zero
+        currentHealth = Mathf.Max(0, currentHealth);
 
         OnDamageTaken?.Invoke(amount);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
@@ -39,7 +40,8 @@ public class Actor : MonoBehaviour
         if (currentHealth <= 0) return;
 
         currentHealth += amount;
-        currentHealth = Mathf.Min(maxHealth, currentHealth); // mathf min ensures health never exceeds max
+        // make sure health never goes above max
+        currentHealth = Mathf.Min(maxHealth, currentHealth);
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 

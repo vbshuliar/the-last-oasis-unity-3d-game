@@ -107,7 +107,8 @@ public class PlayerController : MonoBehaviour
             else
             {
                 target = null;
-                agent.destination = hit.point; // navmesh agent automatically finds path to destination
+                // navmesh agent automatically finds path to destination
+                agent.destination = hit.point;
                 if (clickEffect != null)
                 { Instantiate(clickEffect, hit.point + new Vector3(0, 0.1f, 0), clickEffect.transform.rotation); }
             }
@@ -189,7 +190,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // smoothly rotate to face target using quaternion slerp spherical interpolation
+        // smoothly rotate to face target using quaternion slerp (spherical interpolation)
         Vector3 direction = (facing - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * lookRotationSpeed);
@@ -212,7 +213,7 @@ public class PlayerController : MonoBehaviour
                 float attackDuration = attackAnimationLength / attackSpeed;
                 float delayToHit = attackDelay / attackSpeed;
 
-                // invoke calls a method after a delay damage happens partway through animation
+                // invoke calls a method after a delay, damage happens partway through animation
                 Invoke(nameof(SendAttack), delayToHit);
                 Invoke(nameof(ResetBusyState), attackDuration);
                 break;
@@ -265,7 +266,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(PowerUpCoroutine(sizeMultiplier, speedMultiplier, duration));
     }
 
-    // coroutine runs over multiple frames can wait for time to pass
+    // coroutine runs over multiple frames and can wait for time to pass
     IEnumerator PowerUpCoroutine(float sizeMultiplier, float speedMultiplier, float duration)
     {
         isPoweredUp = true;
@@ -273,7 +274,8 @@ public class PlayerController : MonoBehaviour
         transform.localScale = originalScale * sizeMultiplier;
         agent.speed = originalSpeed * speedMultiplier;
 
-        yield return new WaitForSeconds(duration); // wait for duration seconds
+        // wait for duration seconds
+        yield return new WaitForSeconds(duration);
 
         transform.localScale = originalScale;
         agent.speed = originalSpeed;

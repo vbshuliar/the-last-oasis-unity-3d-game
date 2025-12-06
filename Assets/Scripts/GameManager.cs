@@ -80,8 +80,10 @@ public class GameManager : MonoBehaviour
 
     void UpdateTimer()
     {
-        timeRemaining -= Time.deltaTime; // time deltaTime is time since last frame
-        OnTimeUpdated?.Invoke(timeRemaining); // means only invoke if someone is listening
+        // deltaTime is time since last frame, subtract it from remaining time
+        timeRemaining -= Time.deltaTime;
+        // notify listeners that time updated (only if someone is listening)
+        OnTimeUpdated?.Invoke(timeRemaining);
 
         if (timeRemaining <= 0)
         {
@@ -125,7 +127,8 @@ public class GameManager : MonoBehaviour
         if (CurrentState == GameState.Playing)
         {
             CurrentState = GameState.Paused;
-            Time.timeScale = 0f; // 0 equals paused stops all time based things
+            // timeScale 0 stops all time-based things (animations, movement, etc)
+            Time.timeScale = 0f;
             OnGamePaused?.Invoke();
         }
     }
@@ -135,7 +138,8 @@ public class GameManager : MonoBehaviour
         if (CurrentState == GameState.Paused)
         {
             CurrentState = GameState.Playing;
-            Time.timeScale = 1f; // 1 equals normal speed
+            // timeScale 1 means normal speed
+            Time.timeScale = 1f;
             OnGameResumed?.Invoke();
         }
     }
@@ -186,7 +190,7 @@ public class GameManager : MonoBehaviour
 
     public void AddScore(int points)
     {
-        // multiply points by difficulty level
+        // multiply points by difficulty level (easy=1x, medium=2x, hard=3x)
         float multiplier = difficultyMultipliers[(int)currentDifficulty];
         int finalPoints = Mathf.RoundToInt(points * multiplier);
         currentScore += finalPoints;

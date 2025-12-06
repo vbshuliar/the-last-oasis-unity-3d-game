@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour
     {
         gameManager = GameManager.Instance;
         
-        // subscribe to events when gamemanager fires these events our methods get called
+        // subscribe to events - when gamemanager fires these events our methods get called
         if (gameManager != null)
         {
             gameManager.OnTimeUpdated += UpdateTimer;
@@ -54,12 +54,12 @@ public class UIManager : MonoBehaviour
             }
         }
 
-        // Subscribe to health changes (unsubscribe first to avoid double subscription)
+        // subscribe to health changes (unsubscribe first to avoid double subscription)
         if (playerActor != null)
         {
-            playerActor.OnHealthChanged -= UpdateHealthBar; // Unsubscribe first to avoid duplicates
+            playerActor.OnHealthChanged -= UpdateHealthBar;
             playerActor.OnHealthChanged += UpdateHealthBar;
-            // Update health bar immediately with current health
+            // update health bar immediately with current health
             UpdateHealthBar(playerActor.currentHealth, playerActor.maxHealth);
             Debug.Log($"UIManager: Subscribed to player health changes. Current: {playerActor.currentHealth}/{playerActor.maxHealth}");
         }
@@ -79,11 +79,11 @@ public class UIManager : MonoBehaviour
         {
             FindAndSubscribeToPlayer();
         }
-        // Fallback: Directly poll health if event system isn't working
+        // fallback: directly poll health if event system isn't working
         else if (Time.time - lastHealthCheckTime > HEALTH_CHECK_INTERVAL)
         {
             lastHealthCheckTime = Time.time;
-            // Update health bar directly as fallback (in case event didn't fire)
+            // update health bar directly as fallback (in case event didn't fire)
             UpdateHealthBar(playerActor.currentHealth, playerActor.maxHealth);
         }
 
@@ -112,12 +112,12 @@ public class UIManager : MonoBehaviour
             return;
         }
 
-        // Calculate fill amount (0.0 to 1.0) for Image with Filled type
-        // Clamp to ensure it's always between 0 and 1
+        // calculate fill amount (0.0 to 1.0) for image with filled type
+        // clamp to ensure it's always between 0 and 1
         float fillAmount = Mathf.Clamp01((float)currentHealth / (float)maxHealth);
         healthBar.fillAmount = fillAmount;
         
-        // Only log when health actually changes (to reduce console spam)
+        // only log when health actually changes (to reduce console spam)
         if (currentHealth != lastHealth || maxHealth != lastMaxHealth)
         {
             Debug.Log($"UIManager: Health bar updated! Health: {currentHealth}/{maxHealth}, Fill Amount: {fillAmount}");
@@ -130,7 +130,7 @@ public class UIManager : MonoBehaviour
     {
         if (timerText != null)
         {
-            // convert seconds to minutes and seconds format as mm ss
+            // convert seconds to minutes and seconds format as mm:ss
             int minutes = Mathf.FloorToInt(timeRemaining / 60);
             int seconds = Mathf.FloorToInt(timeRemaining % 60);
             timerText.text = string.Format("{0:00}:{1:00}", minutes, seconds);

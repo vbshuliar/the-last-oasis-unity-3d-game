@@ -1527,6 +1527,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab174ad20a27fbb4f82ee8e48de90b6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OptionsMenuController
+  musicVolumeSlider: {fileID: 0}
+  sfxVolumeSlider: {fileID: 0}
+  difficultyDropdown: {fileID: 0}
+  backButton: {fileID: 0}
+  optionsMenuPanel: {fileID: 0}
+  defaultMusicVolume: 0.7
+  defaultSFXVolume: 0.8
 --- !u!4 &495137190
 Transform:
   m_ObjectHideFlags: 0
@@ -1554,14 +1561,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2ddca0e89457064c9fd0adff246961a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OptionsMenuController
-  musicVolumeSlider: {fileID: 0}
-  sfxVolumeSlider: {fileID: 0}
-  difficultyDropdown: {fileID: 0}
-  backButton: {fileID: 0}
-  optionsMenuPanel: {fileID: 0}
+  musicVolumeSlider: {fileID: 1503919107}
+  sfxVolumeSlider: {fileID: 1261424287}
+  difficultyDropdown: {fileID: 1403303469}
+  backButton: {fileID: 362723214}
+  optionsMenuPanel: {fileID: 1899850853}
   defaultMusicVolume: 0.7
   defaultSFXVolume: 0.8
-  mainMenuSceneName: MainMenu
 --- !u!1 &531546755
 GameObject:
   m_ObjectHideFlags: 0
@@ -2225,6 +2231,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f98b5ce1c1d758e4e97ba2be20b491a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
+  startLevel1Button: {fileID: 0}
+  startLevel2Button: {fileID: 0}
+  tutorialButton: {fileID: 0}
+  optionsButton: {fileID: 0}
+  quitButton: {fileID: 0}
+  optionsMenuController: {fileID: 0}
+  optionsMenuPanel: {fileID: 0}
+  level1SceneName: Level1
+  level2SceneName: Level2
+  tutorialSceneName: Tutorial
 --- !u!4 &1045062879
 Transform:
   m_ObjectHideFlags: 0
@@ -2252,14 +2268,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60fe5f2ee35913d4083276b2ec7459f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuController
-  startButton: {fileID: 2054898029}
+  startLevel1Button: {fileID: 2054898029}
+  startLevel2Button: {fileID: 1376436587}
+  tutorialButton: {fileID: 531546757}
   optionsButton: {fileID: 396512896}
   quitButton: {fileID: 1901164397}
   optionsMenuController: {fileID: 495137191}
   optionsMenuPanel: {fileID: 1899850853}
-  gameSceneName: Level1
+  level1SceneName: Level1
+  level2SceneName: Level2
   tutorialSceneName: Tutorial
-  optionsSceneName: Options
 --- !u!1 &1082670355
 GameObject:
   m_ObjectHideFlags: 0

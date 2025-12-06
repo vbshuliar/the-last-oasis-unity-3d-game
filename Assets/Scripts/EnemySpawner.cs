@@ -34,7 +34,7 @@ public class EnemySpawner : MonoBehaviour
 
         UpdateDifficultySettings();
 
-        // removeall with lambda removes all null enemies from list
+        // remove all null enemies from list (enemies that were destroyed)
         activeEnemies.RemoveAll(enemy => enemy == null);
 
         // spawn enemies based on difficulty if enough time passed and not at max
@@ -76,9 +76,8 @@ public class EnemySpawner : MonoBehaviour
         if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;
         if (spawnPoints == null || spawnPoints.Length == 0) return;
 
-        // random range picks random number between min inclusive and max exclusive
+        // pick random enemy prefab and spawn point
         GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
-
         Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
 
         // instantiate creates a copy of the prefab at the spawn point

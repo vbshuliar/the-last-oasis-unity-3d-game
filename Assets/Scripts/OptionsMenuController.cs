@@ -16,9 +16,6 @@ public class OptionsMenuController : MonoBehaviour
     [SerializeField] private float defaultMusicVolume = 0.7f;
     [SerializeField] private float defaultSFXVolume = 0.8f;
 
-    [Header("Scene Names")]
-    [SerializeField] private string mainMenuSceneName = "MainMenu";
-
     private bool wasGamePaused = false;
 
     void Start()
@@ -70,31 +67,31 @@ public class OptionsMenuController : MonoBehaviour
 
     void LoadSettings()
     {
-        // Load music volume
+        // load music volume
         float musicVolume = PlayerPrefs.GetFloat("MusicVolume", defaultMusicVolume);
         if (musicVolumeSlider != null)
         {
             musicVolumeSlider.value = musicVolume;
         }
 
-        // Load SFX volume
+        // load sfx volume
         float sfxVolume = PlayerPrefs.GetFloat("SFXVolume", defaultSFXVolume);
         if (sfxVolumeSlider != null)
         {
             sfxVolumeSlider.value = sfxVolume;
         }
 
-        // Load difficulty from PlayerPrefs (with fallback to GameManager if available)
+        // load difficulty from playerprefs (with fallback to gamemanager if available)
         if (difficultyDropdown != null)
         {
             int savedDifficulty = 0;
             
-            // Try to load from PlayerPrefs first
+            // try to load from playerprefs first
             if (PlayerPrefs.HasKey("Difficulty"))
             {
                 savedDifficulty = PlayerPrefs.GetInt("Difficulty");
             }
-            // Fallback to GameManager if PlayerPrefs doesn't have it
+            // fallback to gamemanager if playerprefs doesn't have it
             else if (GameManager.Instance != null)
             {
                 savedDifficulty = (int)GameManager.Instance.GetDifficulty();
@@ -102,7 +99,7 @@ public class OptionsMenuController : MonoBehaviour
             
             difficultyDropdown.value = savedDifficulty;
             
-            // Update GameManager if it exists to keep them in sync
+            // update gamemanager if it exists to keep them in sync
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.SetDifficulty((Difficulty)savedDifficulty);
@@ -115,7 +112,7 @@ public class OptionsMenuController : MonoBehaviour
         PlayerPrefs.SetFloat("MusicVolume", value);
         PlayerPrefs.Save();
 
-        // Update AudioManager if it exists
+        // update audiomanager if it exists
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.SetMusicVolume(value);
@@ -127,7 +124,7 @@ public class OptionsMenuController : MonoBehaviour
         PlayerPrefs.SetFloat("SFXVolume", value);
         PlayerPrefs.Save();
 
-        // Update AudioManager if it exists
+        // update audiomanager if it exists
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.SetSFXVolume(value);
@@ -138,11 +135,11 @@ public class OptionsMenuController : MonoBehaviour
     {
         Difficulty difficulty = (Difficulty)value;
         
-        // Save directly to PlayerPrefs to ensure persistence
+        // save directly to playerprefs to ensure persistence
         PlayerPrefs.SetInt("Difficulty", (int)difficulty);
         PlayerPrefs.Save();
         
-        // Update GameManager if it exists to keep them in sync
+        // update gamemanager if it exists to keep them in sync
         if (GameManager.Instance != null)
         {
             GameManager.Instance.SetDifficulty(difficulty);
@@ -151,12 +148,11 @@ public class OptionsMenuController : MonoBehaviour
 
     public void OnBackClicked()
     {
-        // If options menu panel exists in the same scene, hide it
         if (optionsMenuPanel != null)
         {
             optionsMenuPanel.SetActive(false);
             
-            // If game was paused when options opened, resume it
+            // if game was paused when options opened, resume it
             if (wasGamePaused && GameManager.Instance != null)
             {
                 if (GameManager.Instance.CurrentState == GameState.Paused)
@@ -166,18 +162,9 @@ public class OptionsMenuController : MonoBehaviour
                 wasGamePaused = false;
             }
         }
-        // Otherwise, load the main menu scene
-        else if (!string.IsNullOrEmpty(mainMenuSceneName))
+        else
         {
-            Time.timeScale = 1f; // Make sure time scale is reset
-            if (SceneTransitionManager.Instance != null)
-            {
-                SceneTransitionManager.Instance.LoadScene(mainMenuSceneName);
-            }
-            else
-            {
-                SceneManager.LoadScene(mainMenuSceneName);
-            }
+            Debug.LogWarning("OptionsMenuController: Options menu panel is not assigned!");
         }
     }
 

@@ -104,7 +104,8 @@ public class EnemyAI : MonoBehaviour
     void FacePlayer()
     {
         Vector3 direction = (player.position - transform.position).normalized;
-        direction.y = 0; // keep rotation on horizontal plane only
+        // keep rotation on horizontal plane only (ignore y axis)
+        direction.y = 0;
 
         if (direction != Vector3.zero)
         {
@@ -133,7 +134,7 @@ public class EnemyAI : MonoBehaviour
         float delayToHit = attackDelay / attackSpeed;
         float attackDuration = attackAnimationLength / attackSpeed;
 
-        // invoke calls methods after a delay damage happens partway through animation
+        // invoke calls methods after a delay, damage happens partway through animation
         Invoke(nameof(DealDamage), delayToHit);
         Invoke(nameof(ResetAttack), attackDuration);
     }

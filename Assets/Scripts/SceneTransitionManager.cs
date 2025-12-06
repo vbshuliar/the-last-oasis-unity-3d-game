@@ -38,7 +38,8 @@ public class SceneTransitionManager : MonoBehaviour
         GameObject canvasObj = new GameObject("TransitionCanvas");
         Canvas canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 9999; // always on top
+        // always on top
+        canvas.sortingOrder = 9999;
         canvasObj.AddComponent<CanvasScaler>();
         canvasObj.AddComponent<GraphicRaycaster>();
 
@@ -112,7 +113,8 @@ public class SceneTransitionManager : MonoBehaviour
         while (elapsed < fadeDuration)
         {
             elapsed += Time.deltaTime;
-            color.a = Mathf.Clamp01(elapsed / fadeDuration); // alpha goes from 0 to 1
+            // alpha goes from 0 to 1
+            color.a = Mathf.Clamp01(elapsed / fadeDuration);
             fadeImage.color = color;
             yield return null; // wait one frame before continuing
         }
@@ -133,7 +135,8 @@ public class SceneTransitionManager : MonoBehaviour
         while (elapsed < fadeDuration)
         {
             elapsed += Time.deltaTime;
-            color.a = 1f - Mathf.Clamp01(elapsed / fadeDuration); // alpha goes from 1 to 0
+            // alpha goes from 1 to 0
+            color.a = 1f - Mathf.Clamp01(elapsed / fadeDuration);
             fadeImage.color = color;
             yield return null;
         }

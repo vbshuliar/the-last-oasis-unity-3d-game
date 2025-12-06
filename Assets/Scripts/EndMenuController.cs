@@ -85,7 +85,7 @@ public class EndMenuController : MonoBehaviour
             titleText.text = isVictory ? "VICTORY!" : "GAME OVER";
         }
 
-        // Update stats
+        // update stats
         if (GameManager.Instance != null)
         {
             if (scoreText != null)
@@ -111,7 +111,7 @@ public class EndMenuController : MonoBehaviour
                 int highScore = GameManager.Instance.GetHighScore();
                 highScoreText.text = "High Score: " + highScore.ToString();
                 
-                // Show if new high score
+                // show if new high score
                 if (GameManager.Instance.GetCurrentScore() >= highScore && highScore > 0)
                 {
                     highScoreText.text += " (NEW!)";

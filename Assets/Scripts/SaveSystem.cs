@@ -129,7 +129,8 @@ public class SaveSystem : MonoBehaviour
     // coroutine waits for scene to load before restoring player state
     System.Collections.IEnumerator RestoreGameState(GameData data)
     {
-        yield return new WaitForSeconds(0.5f); // wait for scene to finish loading
+        // wait for scene to finish loading
+        yield return new WaitForSeconds(0.5f);
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)

@@ -39,7 +39,7 @@ public class MainMenuController : MonoBehaviour
 
     void EnsureEventSystem()
     {
-        // Check if EventSystem exists in the scene
+        // check if eventsystem exists in the scene (needed for button clicks)
         if (EventSystem.current == null)
         {
             Debug.LogError("MainMenuController: No EventSystem found! Creating one...");
@@ -52,7 +52,7 @@ public class MainMenuController : MonoBehaviour
             Debug.Log("MainMenuController: EventSystem found");
         }
 
-        // Check if Canvas has GraphicRaycaster
+        // check if canvas has graphicraycaster (needed to detect ui clicks)
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas != null)
         {
@@ -90,10 +90,10 @@ public class MainMenuController : MonoBehaviour
             button.gameObject.SetActive(true);
         }
 
-        // Remove existing listeners to avoid duplicates
+        // remove existing listeners to avoid duplicates
         button.onClick.RemoveAllListeners();
         
-        // Add listener
+        // add listener
         button.onClick.AddListener(action);
         Debug.Log($"MainMenuController: {buttonName} button listener added successfully. Button is interactable: {button.interactable}, Active: {button.gameObject.activeInHierarchy}");
     }

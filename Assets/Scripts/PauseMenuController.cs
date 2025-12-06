@@ -38,7 +38,7 @@ public class PauseMenuController : MonoBehaviour
 
     void EnsureEventSystem()
     {
-        // Check if EventSystem exists in the scene
+        // check if eventsystem exists in the scene (needed for button clicks)
         if (EventSystem.current == null)
         {
             Debug.LogError("PauseMenuController: No EventSystem found! Creating one...");
@@ -63,24 +63,24 @@ public class PauseMenuController : MonoBehaviour
             button.interactable = true;
         }
 
-        // Remove existing listeners to avoid duplicates
+        // remove existing listeners to avoid duplicates
         button.onClick.RemoveAllListeners();
         
-        // Add listener
+        // add listener
         button.onClick.AddListener(action);
         Debug.Log($"PauseMenuController: {buttonName} button listener added successfully. Button is interactable: {button.interactable}");
     }
 
     void Update()
     {
-        // Don't handle Esc if options menu is open (let OptionsMenuController handle it)
+        // don't handle esc if options menu is open (let optionsmenucontroller handle it)
         if (optionsMenuPanel != null && optionsMenuPanel.activeSelf)
         {
             return;
         }
 
-        // Check for pause input (handled by GameManager, but we can also check here as backup)
-        // Only handle Esc if pause menu is visible or game is playing
+        // check for pause input (handled by gamemanager, but we can also check here as backup)
+        // only handle esc if pause menu is visible or game is playing
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused && pauseMenuPanel != null && pauseMenuPanel.activeSelf)

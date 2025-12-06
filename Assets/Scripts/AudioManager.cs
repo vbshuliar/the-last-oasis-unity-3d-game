@@ -78,7 +78,8 @@ public class AudioManager : MonoBehaviour
 
     public void SetMusicVolume(float volume)
     {
-        musicVolume = Mathf.Clamp01(volume); // clamp01 keeps value between 0 and 1
+        // keep volume between 0 and 1
+        musicVolume = Mathf.Clamp01(volume);
         if (musicSource != null)
         {
             musicSource.volume = musicVolume;
@@ -87,6 +88,7 @@ public class AudioManager : MonoBehaviour
 
     public void SetSFXVolume(float volume)
     {
+        // keep volume between 0 and 1
         sfxVolume = Mathf.Clamp01(volume);
         if (sfxSource != null)
         {
