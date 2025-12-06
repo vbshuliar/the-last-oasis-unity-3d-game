@@ -19,6 +19,8 @@ public class OptionsMenuController : MonoBehaviour
     [Header("Scene Names")]
     [SerializeField] private string mainMenuSceneName = "MainMenu";
 
+    private bool wasGamePaused = false;
+
     void Start()
     {
         LoadSettings();
@@ -42,6 +44,27 @@ public class OptionsMenuController : MonoBehaviour
         if (backButton != null)
         {
             backButton.onClick.AddListener(OnBackClicked);
+        }
+    }
+
+    void Update()
+    {
+        // Handle Esc key to close options menu
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (optionsMenuPanel != null && optionsMenuPanel.activeSelf)
+            {
+                OnBackClicked();
+            }
+        }
+    }
+
+    void OnEnable()
+    {
+        // Check if game was paused when options opened
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Paused)
+        {
+            wasGamePaused = true;
         }
     }
 
@@ -132,10 +155,21 @@ public class OptionsMenuController : MonoBehaviour
         if (optionsMenuPanel != null)
         {
             optionsMenuPanel.SetActive(false);
+            
+            // If game was paused when options opened, resume it
+            if (wasGamePaused && GameManager.Instance != null)
+            {
+                if (GameManager.Instance.CurrentState == GameState.Paused)
+                {
+                    GameManager.Instance.ResumeGame();
+                }
+                wasGamePaused = false;
+            }
         }
         // Otherwise, load the main menu scene
         else if (!string.IsNullOrEmpty(mainMenuSceneName))
         {
+            Time.timeScale = 1f; // Make sure time scale is reset
             if (SceneTransitionManager.Instance != null)
             {
                 SceneTransitionManager.Instance.LoadScene(mainMenuSceneName);

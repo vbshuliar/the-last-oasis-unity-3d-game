@@ -34,10 +34,11 @@
 ### Step 1.1: Verify Scripts Are Present
 
 1. **Open Unity Editor**
+
    - Launch Unity Hub
    - Open your project
-
 2. **Check Scripts Folder**
+
    - In Project window (bottom), navigate to: `Assets/Scripts`
    - Verify all script folders exist:
      - `Core/`
@@ -48,8 +49,8 @@
      - `AI/Steering/`
      - `AI/BehaviourTree/`
      - `AI/Advanced/`
-
 3. **Verify Key Scripts Exist**
+
    - `Core/GameManager.cs`
    - `Core/SceneTransitionManager.cs`
    - `UI/UIManager.cs`
@@ -94,6 +95,7 @@
 ### Step 2.1: Create All Required Scenes
 
 1. **Create Splash Screen Scene:**
+
    - `File → New Scene`
    - Select: `Basic (Built-in)`
    - Click `Create`
@@ -101,8 +103,8 @@
    - Navigate to: `Assets/Scenes/`
    - Name: `SplashScreen`
    - Click `Save`
-
 2. **Create Main Menu Scene:**
+
    - `File → New Scene`
    - Select: `Basic (Built-in)`
    - Click `Create`
@@ -110,8 +112,8 @@
    - Navigate to: `Assets/Scenes/`
    - Name: `MainMenu`
    - Click `Save`
-
 3. **Create Tutorial Scene:**
+
    - `File → New Scene`
    - Select: `Basic (Built-in)`
    - Click `Create`
@@ -119,12 +121,12 @@
    - Navigate to: `Assets/Scenes/`
    - Name: `Tutorial`
    - Click `Save`
-
 4. **Create Main Game Scene (if not exists):**
+
    - If `Main.unity` already exists, skip this
    - Otherwise: `File → New Scene` → `Basic (Built-in)` → Save as `Main` in `Assets/Scenes/`
-
 5. **Create Level 2 Scene:**
+
    - `File → New Scene`
    - Select: `Basic (Built-in)`
    - Click `Create`
@@ -140,8 +142,8 @@
 ### Step 3.1: Create Splash Screen UI
 
 1. **Open `SplashScreen.unity` scene**
-
 2. **Create Canvas:**
+
    - Right-click in Hierarchy (left panel)
    - `UI → Canvas`
    - Select Canvas in Hierarchy
@@ -150,8 +152,8 @@
        - `UI Scale Mode`: `Scale With Screen Size`
        - `Reference Resolution`: X=`1920`, Y=`1080`
      - `Graphic Raycaster` component: Leave default
-
 3. **Create Background Image:**
+
    - Right-click `Canvas` in Hierarchy
    - `UI → Image`
    - Name it: `Background`
@@ -162,8 +164,8 @@
      - `Image` component:
        - `Color`: Black (R=0, G=0, B=0, A=255)
        - Or assign a background texture if you have one
-
 4. **Create Logo/Title:**
+
    - Right-click `Canvas` in Hierarchy
    - `UI → Text - TextMeshPro`
    - If prompted, click `Import TMP Essentials`
@@ -180,8 +182,8 @@
        - `Font Size`: 72
        - `Alignment`: Center
        - `Color`: White or your choice
-
 5. **Create Subtitle (Optional):**
+
    - Right-click `Canvas` in Hierarchy
    - `UI → Text - TextMeshPro`
    - Name it: `Subtitle`
@@ -201,23 +203,24 @@
 ### Step 3.2: Add Splash Screen Controller
 
 1. **Create Empty GameObject:**
+
    - Right-click in Hierarchy
    - `Create Empty`
    - Name it: `SplashScreenController`
-
 2. **Add Script:**
+
    - Select `SplashScreenController` in Hierarchy
    - In Inspector, click `Add Component`
    - Type: `SplashScreenController`
    - Click on the script name when it appears
    - OR drag `Assets/Scripts/UI/SplashScreenController.cs` onto the GameObject
-
 3. **Configure Script:**
+
    - In Inspector, `SplashScreenController` component:
      - `Display Duration`: `3` (seconds)
      - `Next Scene Name`: `MainMenu`
-
 4. **Save Scene:**
+
    - `File → Save` (Ctrl+S / Cmd+S)
 
 ---
@@ -227,8 +230,8 @@
 ### Step 4.1: Create Main Menu UI
 
 1. **Open `MainMenu.unity` scene**
-
 2. **Create Canvas:**
+
    - Right-click in Hierarchy
    - `UI → Canvas`
    - Select Canvas
@@ -236,8 +239,8 @@
      - `Canvas Scaler`:
        - `UI Scale Mode`: `Scale With Screen Size`
        - `Reference Resolution`: X=`1920`, Y=`1080`
-
 3. **Create Background:**
+
    - Right-click `Canvas` in Hierarchy
    - `UI → Image`
    - Name: `Background`
@@ -246,8 +249,8 @@
      - `Image`:
        - `Color`: Dark color (e.g., R=30, G=30, B=50, A=255)
        - Or assign background texture
-
 4. **Create Title:**
+
    - Right-click `Canvas` in Hierarchy
    - `UI → Text - TextMeshPro`
    - Name: `Title`
@@ -262,8 +265,8 @@
        - `Font Size`: 80
        - `Alignment`: Center
        - `Color`: White
-
 5. **Create Start Button:**
+
    - Right-click `Canvas` in Hierarchy
    - `UI → Button - TextMeshPro`
    - Name: `StartButton`
@@ -279,8 +282,8 @@
        - `Text`: `START GAME`
        - `Font Size`: 36
        - `Alignment`: Center
-
 6. **Create Options Button:**
+
    - Right-click `Canvas` in Hierarchy
    - `UI → Button - TextMeshPro`
    - Name: `OptionsButton`
@@ -294,8 +297,8 @@
      - Select child `Text (TMP)`:
        - `Text`: `OPTIONS`
        - `Font Size`: 36
-
 7. **Create Quit Button:**
+
    - Right-click `Canvas` in Hierarchy
    - `UI → Button - TextMeshPro`
    - Name: `QuitButton`
@@ -313,15 +316,16 @@
 ### Step 4.2: Add Main Menu Controller
 
 1. **Create Empty GameObject:**
+
    - Right-click in Hierarchy
    - `Create Empty`
    - Name: `MainMenuController`
-
 2. **Add Script:**
+
    - Select `MainMenuController`
    - In Inspector, `Add Component` → Type: `MainMenuController`
-
 3. **Configure Script:**
+
    - In Inspector, `MainMenuController` component:
      - `Start Button`: Drag `StartButton` from Hierarchy
      - `Options Button`: Drag `OptionsButton` from Hierarchy
@@ -329,8 +333,8 @@
      - `Game Scene Name`: Type `Main`
      - `Tutorial Scene Name`: Type `Tutorial`
      - `Options Scene Name`: Type `Options` (or leave empty if using panel)
-
 4. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -340,8 +344,8 @@
 ### Step 5.1: Create Options Panel (In Main Menu Scene)
 
 1. **Open `MainMenu.unity` scene**
-
 2. **Create Options Panel:**
+
    - Right-click `Canvas` in Hierarchy
    - `UI → Panel`
    - Name: `OptionsPanel`
@@ -349,8 +353,8 @@
      - `Rect Transform`: Anchor to `Stretch/Stretch`
      - `Image` component:
        - `Color`: Semi-transparent black (R=0, G=0, B=0, A=200)
-
 3. **Create Title:**
+
    - Right-click `OptionsPanel` in Hierarchy
    - `UI → Text - TextMeshPro`
    - Name: `OptionsTitle`
@@ -364,8 +368,8 @@
        - `Text`: `OPTIONS`
        - `Font Size`: 60
        - `Alignment`: Center
-
 4. **Create Music Volume Slider:**
+
    - Right-click `OptionsPanel` in Hierarchy
    - `UI → Slider`
    - Name: `MusicVolumeSlider`
@@ -394,8 +398,8 @@
        - `TextMeshProUGUI`:
          - `Text`: `Music Volume:`
          - `Font Size`: 24
-
 5. **Create SFX Volume Slider:**
+
    - Right-click `OptionsPanel` in Hierarchy
    - `UI → Slider`
    - Name: `SFXVolumeSlider`
@@ -415,8 +419,8 @@
      - `UI → Text - TextMeshPro`
      - Name: `SFXLabel`
      - Configure same as MusicLabel but text: `SFX Volume:`
-
 6. **Create Difficulty Dropdown:**
+
    - Right-click `OptionsPanel` in Hierarchy
    - `UI → Dropdown - TextMeshPro`
    - Name: `DifficultyDropdown`
@@ -434,8 +438,8 @@
          - Option 1: `Medium`
          - Option 2: `Hard`
        - `Value`: 0
-
 7. **Create Back Button:**
+
    - Right-click `OptionsPanel` in Hierarchy
    - `UI → Button - TextMeshPro`
    - Name: `BackButton`
@@ -448,8 +452,8 @@
      - Select child `Text (TMP)`:
        - `Text`: `BACK`
        - `Font Size`: 30
-
 8. **Set Panel Inactive:**
+
    - Select `OptionsPanel` in Hierarchy
    - In Inspector, top-left, uncheck the checkbox next to the name
    - This hides it initially
@@ -457,27 +461,28 @@
 ### Step 5.2: Add Options Menu Controller
 
 1. **Create Empty GameObject:**
+
    - Right-click in Hierarchy
    - `Create Empty`
    - Name: `OptionsMenuController`
-
 2. **Add Script:**
+
    - Select `OptionsMenuController`
    - `Add Component` → `OptionsMenuController`
-
 3. **Configure Script:**
+
    - In Inspector, `OptionsMenuController` component:
      - `Options Panel`: Drag `OptionsPanel` from Hierarchy
      - `Music Volume Slider`: Drag `MusicVolumeSlider` from Hierarchy
      - `SFX Volume Slider`: Drag `SFXVolumeSlider` from Hierarchy
      - `Difficulty Dropdown`: Drag `DifficultyDropdown` from Hierarchy
      - `Back Button`: Drag `BackButton` from Hierarchy
-
 4. **Update MainMenuController:**
+
    - Select `MainMenuController` in Hierarchy
    - In Inspector, find `OnOptionsClicked` method (if exists) or add reference to `OptionsMenuController`
-
 5. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -487,8 +492,8 @@
 ### Step 6.1: Create Tutorial Environment
 
 1. **Open `Tutorial.unity` scene**
-
 2. **Create Ground:**
+
    - Right-click in Hierarchy
    - `3D Object → Plane`
    - Name: `Ground`
@@ -496,8 +501,8 @@
      - `Transform`:
        - `Position`: X=0, Y=0, Z=0
        - `Scale`: X=10, Y=1, Z=10
-
 3. **Add Basic Lighting:**
+
    - In Hierarchy, find `Directional Light`
    - In Inspector:
      - `Rotation`: X=50, Y=-30, Z=0
@@ -507,11 +512,12 @@
 ### Step 6.2: Create Tutorial UI
 
 1. **Create Canvas:**
+
    - Right-click in Hierarchy
    - `UI → Canvas`
    - Configure same as Main Menu Canvas
-
 2. **Create Tutorial Panel:**
+
    - Right-click `Canvas` in Hierarchy
    - `UI → Panel`
    - Name: `TutorialPanel`
@@ -519,8 +525,8 @@
      - `Rect Transform`: Anchor to `Stretch/Stretch`
      - `Image`:
        - `Color`: Semi-transparent black (A=220)
-
 3. **Create Tutorial Text:**
+
    - Right-click `TutorialPanel` in Hierarchy
    - `UI → Text - TextMeshPro`
    - Name: `TutorialText`
@@ -534,8 +540,8 @@
        - `Font Size`: 32
        - `Alignment`: Center
        - `Color`: White
-
 4. **Create Skip Button:**
+
    - Right-click `TutorialPanel` in Hierarchy
    - `UI → Button - TextMeshPro`
    - Name: `SkipButton`
@@ -553,21 +559,22 @@
 ### Step 6.3: Add Tutorial Controller
 
 1. **Create Empty GameObject:**
+
    - Right-click in Hierarchy
    - `Create Empty`
    - Name: `TutorialController`
-
 2. **Add Script:**
+
    - Select `TutorialController`
    - `Add Component` → `TutorialController`
-
 3. **Configure Script:**
+
    - In Inspector, `TutorialController` component:
      - `Tutorial Panel`: Drag `TutorialPanel` from Hierarchy
      - `Skip Button`: Drag `SkipButton` from Hierarchy
      - `Next Scene Name`: Type `Main`
-
 4. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -577,8 +584,8 @@
 ### Step 7.1: Set Up Environment
 
 1. **Open `Main.unity` scene** (or create if doesn't exist)
-
 2. **Create Ground:**
+
    - Right-click in Hierarchy
    - `3D Object → Plane`
    - Name: `Ground`
@@ -586,8 +593,8 @@
      - `Transform`:
        - `Position`: X=0, Y=0, Z=0
        - `Scale`: X=20, Y=1, Z=20
-
 3. **Add Buildings/Obstacles:**
+
    - Create simple buildings:
      - Right-click in Hierarchy
      - `3D Object → Cube`
@@ -598,8 +605,8 @@
          - `Scale`: X=4, Y=4, Z=4
    - Repeat to create 5-10 buildings scattered around
    - These act as obstacles and cover
-
 4. **Add Lighting:**
+
    - Select `Directional Light` in Hierarchy
    - In Inspector:
      - `Rotation`: X=50, Y=-30, Z=0
@@ -620,36 +627,37 @@
 ### Step 7.2: Create GameManager GameObject
 
 1. **Create Empty GameObject:**
+
    - Right-click in Hierarchy
    - `Create Empty`
    - Name: `GameManager`
-
 2. **Add Script:**
+
    - Select `GameManager`
    - `Add Component` → `GameManager`
-
 3. **Configure Script:**
+
    - In Inspector, `GameManager` component:
      - `Game Duration`: `300` (5 minutes in seconds)
      - `Current Difficulty`: `Easy` (dropdown)
      - `Points Per Kill`: `10`
      - `Points Per Second`: `1`
      - `Points Per Pickup`: `5`
-
 4. **This GameObject will persist between scenes** (DontDestroyOnLoad is handled in script)
 
 ### Step 7.3: Create SceneTransitionManager GameObject
 
 1. **Create Empty GameObject:**
+
    - Right-click in Hierarchy
    - `Create Empty`
    - Name: `SceneTransitionManager`
-
 2. **Add Script:**
+
    - Select `SceneTransitionManager`
    - `Add Component` → `SceneTransitionManager`
-
 3. **Configure Script:**
+
    - In Inspector, `SceneTransitionManager` component:
      - `Fade Duration`: `1` (second)
      - `Fade Image`: Leave empty (auto-created if null)
@@ -657,15 +665,16 @@
 ### Step 7.4: Create AudioManager GameObject
 
 1. **Create Empty GameObject:**
+
    - Right-click in Hierarchy
    - `Create Empty`
    - Name: `AudioManager`
-
 2. **Add Script:**
+
    - Select `AudioManager`
    - `Add Component` → `AudioManager`
-
 3. **Configure Script:**
+
    - In Inspector, `AudioManager` component:
      - `Music Source`: Leave empty (auto-created)
      - `SFX Source`: Leave empty (auto-created)
@@ -688,26 +697,27 @@
 ### Step 8.1: Duplicate Main Scene
 
 1. **In Project window:**
+
    - Navigate to: `Assets/Scenes/`
    - Right-click `Main.unity`
    - `Duplicate`
    - Rename: `Level2`
-
 2. **Open `Level2.unity` scene**
 
 ### Step 8.2: Modify Level 2 Environment
 
 1. **Rearrange Buildings:**
+
    - Select buildings in Hierarchy
    - Move them to different positions
    - Change some scales for variety
-
 2. **Add Different Features:**
+
    - Add more obstacles
    - Create different building layouts
    - Add unique landmarks
-
 3. **Update Spawn Points:**
+
    - Create spawn point markers:
      - Right-click in Hierarchy
      - `Create Empty`
@@ -716,8 +726,8 @@
        - `Transform`:
          - `Position`: X=5, Y=0, Z=5
    - Create 5-10 spawn points scattered around
-
 4. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -727,8 +737,8 @@
 ### Step 9.1: Create HUD Canvas
 
 1. **Open `Main.unity` scene**
-
 2. **Create Canvas:**
+
    - Right-click in Hierarchy
    - `UI → Canvas`
    - Name: `HUDCanvas`
@@ -742,6 +752,7 @@
 ### Step 9.2: Create Health Bar
 
 1. **Create Health Bar Background:**
+
    - Right-click `HUDCanvas` in Hierarchy
    - `UI → Image`
    - Name: `HealthBarBackground`
@@ -754,8 +765,8 @@
        - `Height`: 30
      - `Image`:
        - `Color`: Dark red (R=100, G=0, B=0, A=255)
-
 2. **Create Health Bar Fill:**
+
    - Right-click `HealthBarBackground` in Hierarchy
    - `UI → Image`
    - Name: `HealthBarFill`
@@ -771,8 +782,8 @@
        - `Image Type`: `Filled`
        - `Fill Method`: `Horizontal`
        - `Fill Origin`: `Left`
-
 3. **Create Health Bar Slider (Alternative Method):**
+
    - Actually, use Slider instead:
    - Delete `HealthBarFill`
    - Right-click `HealthBarBackground` in Hierarchy
@@ -866,15 +877,16 @@
 ### Step 9.7: Add UIManager
 
 1. **Create Empty GameObject:**
+
    - Right-click in Hierarchy
    - `Create Empty`
    - Name: `UIManager`
-
 2. **Add Script:**
+
    - Select `UIManager`
    - `Add Component` → `UIManager`
-
 3. **Configure Script:**
+
    - In Inspector, `UIManager` component:
      - `Health Bar`: Drag `HealthBar` slider from Hierarchy
      - `Timer Text`: Drag `TimerText` from Hierarchy
@@ -886,6 +898,7 @@
 ### Step 9.8: Create Pause Menu
 
 1. **Create Pause Panel:**
+
    - Right-click `HUDCanvas` in Hierarchy
    - `UI → Panel`
    - Name: `PausePanel`
@@ -894,8 +907,8 @@
      - `Image`:
        - `Color`: Semi-transparent black (A=200)
    - **Set inactive** (uncheck checkbox)
-
 2. **Create Pause Title:**
+
    - Right-click `PausePanel` in Hierarchy
    - `UI → Text - TextMeshPro`
    - Name: `PauseTitle`
@@ -910,8 +923,8 @@
        - `Font Size`: 60
        - `Alignment`: Center
        - `Color`: White
-
 3. **Create Resume Button:**
+
    - Right-click `PausePanel` in Hierarchy
    - `UI → Button - TextMeshPro`
    - Name: `ResumeButton`
@@ -924,32 +937,32 @@
      - Select child `Text (TMP)`:
        - `Text`: `RESUME`
        - `Font Size`: 30
-
 4. **Create Restart Button:**
+
    - Right-click `PausePanel` in Hierarchy
    - `UI → Button - TextMeshPro`
    - Name: `RestartButton`
    - Configure same as ResumeButton but:
      - `Pos Y`: -20
      - `Text`: `RESTART`
-
 5. **Create Main Menu Button:**
+
    - Right-click `PausePanel` in Hierarchy
    - `UI → Button - TextMeshPro`
    - Name: `MainMenuButton`
    - Configure same as ResumeButton but:
      - `Pos Y`: -90
      - `Text`: `MAIN MENU`
-
 6. **Create Quit Button:**
+
    - Right-click `PausePanel` in Hierarchy
    - `UI → Button - TextMeshPro`
    - Name: `QuitButton`
    - Configure same as ResumeButton but:
      - `Pos Y`: -160
      - `Text`: `QUIT`
-
 7. **Add PauseMenuController:**
+
    - Create Empty GameObject: `PauseMenuController`
    - `Add Component` → `PauseMenuController`
    - In Inspector:
@@ -962,6 +975,7 @@
 ### Step 9.9: Create End Menu
 
 1. **Create End Panel:**
+
    - Right-click `HUDCanvas` in Hierarchy
    - `UI → Panel`
    - Name: `EndPanel`
@@ -969,8 +983,8 @@
      - `Rect Transform`: Anchor to `Stretch/Stretch`
      - `Image`: Semi-transparent black
    - **Set inactive**
-
 2. **Create End Title:**
+
    - Right-click `EndPanel` in Hierarchy
    - `UI → Text - TextMeshPro`
    - Name: `EndTitle`
@@ -985,8 +999,8 @@
        - `Font Size`: 70
        - `Alignment`: Center
        - `Color`: White
-
 3. **Create Score Text:**
+
    - Right-click `EndPanel` in Hierarchy
    - `UI → Text - TextMeshPro`
    - Name: `EndScoreText`
@@ -1000,36 +1014,36 @@
        - `Text`: `Score: 0`
        - `Font Size`: 32
        - `Alignment`: Center
-
 4. **Create Time Text:**
+
    - Right-click `EndPanel` in Hierarchy
    - `UI → Text - TextMeshPro`
    - Name: `EndTimeText`
    - Configure same as EndScoreText but:
      - `Pos Y`: 0
      - `Text`: `Time Survived: 05:00`
-
 5. **Create Kills Text:**
+
    - Right-click `EndPanel` in Hierarchy
    - `UI → Text - TextMeshPro`
    - Name: `EndKillsText`
    - Configure same as EndScoreText but:
      - `Pos Y`: -50
      - `Text`: `Enemies Killed: 0`
-
 6. **Create High Score Text:**
+
    - Right-click `EndPanel` in Hierarchy
    - `UI → Text - TextMeshPro`
    - Name: `EndHighScoreText`
    - Configure same as EndScoreText but:
      - `Pos Y`: -100
      - `Text`: `High Score: 0`
-
 7. **Create Buttons:**
+
    - Create `RestartButton`, `MainMenuButton`, `QuitButton` same as Pause Menu
    - Position them at bottom
-
 8. **Add EndMenuController:**
+
    - Create Empty GameObject: `EndMenuController`
    - `Add Component` → `EndMenuController`
    - In Inspector, assign all UI elements:
@@ -1042,8 +1056,8 @@
      - `Restart Button`: Drag `RestartButton`
      - `Main Menu Button`: Drag `MainMenuButton`
      - `Quit Button`: Drag `QuitButton`
-
 9. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -1053,8 +1067,8 @@
 ### Step 10.1: Create Player GameObject
 
 1. **Open `Main.unity` scene**
-
 2. **Create Player:**
+
    - Right-click in Hierarchy
    - `3D Object → Capsule` (or use your player model)
    - Name: `Player`
@@ -1063,8 +1077,8 @@
        - `Position`: X=0, Y=1, Z=0
        - `Rotation`: X=0, Y=0, Z=0
        - `Scale`: X=1, Y=1, Z=1
-
 3. **Tag Player:**
+
    - In Inspector, top section:
      - `Tag`: Click dropdown → `Add Tag...`
      - Click `+` button
@@ -1072,8 +1086,8 @@
      - Click `Save`
      - Select `Player` GameObject
      - Set `Tag` to `Player`
-
 4. **Add NavMesh Agent:**
+
    - Select `Player` in Hierarchy
    - `Add Component` → Type: `Nav Mesh Agent`
    - In Inspector, `Nav Mesh Agent` component:
@@ -1083,14 +1097,14 @@
      - `Acceleration`: 8
      - `Stopping Distance`: 0.5
      - `Base Offset`: 1
-
 5. **Add Actor Component:**
+
    - Select `Player`
    - `Add Component` → `Actor`
    - In Inspector, `Actor` component:
      - `Max Health`: 100
-
 6. **Add PlayerController Component:**
+
    - Select `Player`
    - `Add Component` → `PlayerController`
    - In Inspector, `PlayerController` component:
@@ -1106,29 +1120,30 @@
      - `Attack Distance`: 1.5
      - `Attack Damage`: 1
      - `Hit Effect`: Leave empty (or create particle effect)
-
 7. **Add Animator (if you have animations):**
+
    - Select `Player`
    - `Add Component` → `Animator`
    - In Inspector, `Animator` component:
      - `Controller`: Assign your player animator controller
      - `Avatar`: Assign if you have one
-
 8. **Add Interactable Component (Optional):**
+
    - If player needs to be interactable, add `Interactable` component
    - Set `Interaction Type` to appropriate value
 
 ### Step 10.2: Set Up Player Camera
 
 1. **Find Main Camera:**
-   - In Hierarchy, select `Main Camera`
 
+   - In Hierarchy, select `Main Camera`
 2. **Add CameraController (if script exists):**
+
    - Select `Main Camera`
    - `Add Component` → `CameraController` (if you have this script)
    - Configure to follow player
-
 3. **OR Manually Configure Camera:**
+
    - In Inspector, `Transform`:
      - `Position`: X=0, Y=15, Z=-10
      - `Rotation`: X=60, Y=0, Z=0
@@ -1136,8 +1151,8 @@
      - `Projection`: `Perspective`
      - `Field of View`: 60
    - Create script to follow player OR use Cinemachine
-
 4. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -1147,6 +1162,7 @@
 ### Step 11.1: Create Basic Enemy Prefab
 
 1. **Create Enemy GameObject:**
+
    - Right-click in Hierarchy
    - `3D Object → Capsule` (or use enemy model)
    - Name: `BasicEnemy`
@@ -1154,13 +1170,13 @@
      - `Transform`:
        - `Position`: X=10, Y=1, Z=10
        - `Scale`: X=1, Y=1, Z=1
-
 2. **Tag Enemy:**
+
    - In Inspector:
      - `Tag`: Create new tag `Enemy` (same process as Player tag)
      - Set tag to `Enemy`
-
 3. **Add NavMesh Agent:**
+
    - Select `BasicEnemy`
    - `Add Component` → `Nav Mesh Agent`
    - In Inspector:
@@ -1170,14 +1186,14 @@
      - `Acceleration`: 8
      - `Stopping Distance`: 1.5
      - `Base Offset`: 1
-
 4. **Add Actor Component:**
+
    - Select `BasicEnemy`
    - `Add Component` → `Actor`
    - In Inspector:
      - `Max Health`: 50
-
 5. **Add EnemyAI Component:**
+
    - Select `BasicEnemy`
    - `Add Component` → `EnemyAI`
    - In Inspector, `EnemyAI` component:
@@ -1188,20 +1204,20 @@
      - `Attack Delay`: 0.3
      - `Hit Effect`: Leave empty (or particle effect)
      - `Rotation Speed`: 5
-
 6. **Add Animator:**
+
    - Select `BasicEnemy`
    - `Add Component` → `Animator`
    - Assign enemy animator controller
-
 7. **Add Interactable Component:**
+
    - Select `BasicEnemy`
    - `Add Component` → `Interactable`
    - In Inspector, `Interactable` component:
      - `Interaction Type`: `Enemy`
      - `My Actor`: Drag `Actor` component from same GameObject (or it auto-finds)
-
 8. **Create Prefab:**
+
    - Drag `BasicEnemy` from Hierarchy to `Assets/Prefabs/Enemies/` folder
    - Name: `BasicEnemy`
    - Delete `BasicEnemy` from scene (we'll spawn it)
@@ -1209,11 +1225,12 @@
 ### Step 11.2: Create Ranged Enemy Prefab
 
 1. **Duplicate BasicEnemy:**
+
    - In Project window, right-click `BasicEnemy` prefab
    - `Duplicate`
    - Rename: `RangedEnemy`
-
 2. **Modify RangedEnemy:**
+
    - Double-click `RangedEnemy` prefab to open Prefab Mode
    - Select root GameObject
    - In Inspector:
@@ -1230,11 +1247,12 @@
 ### Step 11.3: Create Fast Enemy Prefab
 
 1. **Duplicate BasicEnemy:**
+
    - Right-click `BasicEnemy` prefab
    - `Duplicate`
    - Rename: `FastEnemy`
-
 2. **Modify FastEnemy:**
+
    - Double-click `FastEnemy` prefab
    - Select root GameObject
    - In Inspector:
@@ -1254,11 +1272,12 @@
 ### Step 11.4: Create Boss Enemy Prefab
 
 1. **Duplicate BasicEnemy:**
+
    - Right-click `BasicEnemy` prefab
    - `Duplicate`
    - Rename: `BossEnemy`
-
 2. **Modify BossEnemy:**
+
    - Double-click `BossEnemy` prefab
    - Select root GameObject
    - In Inspector:
@@ -1285,6 +1304,7 @@
 ### Step 12.1: Create Health Pack Prefab
 
 1. **Create Health Pack GameObject:**
+
    - Right-click in Hierarchy
    - `3D Object → Cube` (or use item model)
    - Name: `HealthPack`
@@ -1293,32 +1313,33 @@
        - `Scale`: X=0.5, Y=0.5, Z=0.5
      - `Mesh Renderer`:
        - `Material`: Create red material or assign existing
-
 2. **Add ItemPickup Component:**
+
    - Select `HealthPack`
    - `Add Component` → `ItemPickup`
    - In Inspector, `ItemPickup` component:
      - `Item Type`: `HealthPack` (dropdown)
      - `Heal Amount`: 25
-
 3. **Add Interactable Component:**
+
    - Select `HealthPack`
    - `Add Component` → `Interactable`
    - In Inspector:
      - `Interaction Type`: `Item`
      - `My Actor`: Leave empty (not needed for items)
-
 4. **Tag Item:**
+
    - Create tag: `Interactable`
    - Set `HealthPack` tag to `Interactable`
-
 5. **Create Prefab:**
+
    - Drag `HealthPack` to `Assets/Prefabs/Items/`
    - Delete from scene
 
 ### Step 12.2: Create Green Potion Prefab
 
 1. **Create Green Potion:**
+
    - Right-click in Hierarchy
    - `3D Object → Sphere`
    - Name: `GreenPotion`
@@ -1327,8 +1348,8 @@
        - `Scale`: X=0.3, Y=0.3, Z=0.3
      - `Mesh Renderer`:
        - `Material`: Green material
-
 2. **Add ItemPickup Component:**
+
    - Select `GreenPotion`
    - `Add Component` → `ItemPickup`
    - In Inspector:
@@ -1336,43 +1357,45 @@
      - `Size Multiplier`: 2
      - `Speed Multiplier`: 2
      - `Duration`: 5
-
 3. **Add Interactable Component:**
-   - Same as HealthPack
 
+   - Same as HealthPack
 4. **Tag and Prefab:**
+
    - Tag: `Interactable`
    - Create prefab in `Assets/Prefabs/Items/`
 
 ### Step 12.3: Create Speed Boost Prefab
 
 1. **Create Speed Boost:**
+
    - Right-click in Hierarchy
    - `3D Object → Cylinder`
    - Name: `SpeedBoost`
    - Scale: 0.4
    - Material: Blue
-
 2. **Add ItemPickup Component:**
+
    - `Item Type`: `SpeedBoost`
    - `Speed Boost Multiplier`: 1.5
    - `Speed Boost Duration`: 10
-
 3. **Add Interactable, Tag, Create Prefab:**
+
    - Same process
 
 ### Step 12.4: Create Damage Boost Prefab
 
 1. **Create Damage Boost:**
+
    - Similar to Speed Boost
    - Material: Orange/Red
-
 2. **Add ItemPickup Component:**
+
    - `Item Type`: `DamageBoost`
    - `Damage Boost Multiplier`: 2
    - `Damage Boost Duration`: 15
-
 3. **Add Interactable, Tag, Create Prefab:**
+
    - Same process
 
 ---
@@ -1382,6 +1405,7 @@
 ### Step 13.1: Create Difficulty Settings
 
 1. **Create Easy Difficulty:**
+
    - In Project window, right-click `Assets/Scripts/Core/`
    - `Create → Game → Difficulty Settings`
    - Name: `EasyDifficulty`
@@ -1394,8 +1418,8 @@
      - `Item Spawn Rate`: 0.2
      - `Player Health Multiplier`: 1.0
      - `Score Multiplier`: 1.0
-
 2. **Create Medium Difficulty:**
+
    - Duplicate `EasyDifficulty`
    - Rename: `MediumDifficulty`
    - In Inspector:
@@ -1406,8 +1430,8 @@
      - `Max Enemies On Screen`: 15
      - `Item Spawn Rate`: 0.15
      - `Score Multiplier`: 2.0
-
 3. **Create Hard Difficulty:**
+
    - Duplicate `EasyDifficulty`
    - Rename: `HardDifficulty`
    - In Inspector:
@@ -1422,8 +1446,8 @@
 ### Step 13.2: Create Enemy Spawner GameObject
 
 1. **Open `Main.unity` scene**
-
 2. **Create Spawn Points:**
+
    - Create 8-10 empty GameObjects
    - Name: `SpawnPoint1`, `SpawnPoint2`, etc.
    - Position them around the edges of your map
@@ -1433,19 +1457,19 @@
      - SpawnPoint3: X=0, Y=0, Z=20
      - SpawnPoint4: X=0, Y=0, Z=-20
      - etc.
-
 3. **Create Enemy Spawner GameObject:**
+
    - Right-click in Hierarchy
    - `Create Empty`
    - Name: `EnemySpawner`
-
 4. **Add EnemySpawner Component:**
+
    - Select `EnemySpawner`
    - `Add Component` → `EnemySpawner`
-
 5. **Configure EnemySpawner:**
+
    - In Inspector, `EnemySpawner` component:
-     - `Enemy Prefabs`: 
+     - `Enemy Prefabs`:
        - Set `Size` to 3
        - Element 0: Drag `BasicEnemy` prefab
        - Element 1: Drag `RangedEnemy` prefab
@@ -1458,8 +1482,8 @@
      - `Easy Settings`: Drag `EasyDifficulty` asset
      - `Medium Settings`: Drag `MediumDifficulty` asset
      - `Hard Settings`: Drag `HardDifficulty` asset
-
 6. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -1469,6 +1493,7 @@
 ### Step 14.1: Import Audio Files
 
 1. **Prepare Audio Files:**
+
    - Get or create audio files:
      - Background music (loopable)
      - Player attack sound
@@ -1477,12 +1502,12 @@
      - Player hurt sound
      - Enemy death sound
      - Footstep sound
-
 2. **Import to Unity:**
+
    - Drag audio files into `Assets/Audio/` folder
    - Organize: Music in `Audio/Music/`, SFX in `Audio/SFX/`
-
 3. **Configure Audio Import Settings:**
+
    - Select audio file in Project
    - In Inspector:
      - For Music:
@@ -1498,11 +1523,11 @@
 ### Step 14.2: Assign Audio to AudioManager
 
 1. **Open `Main.unity` scene**
-
 2. **Select AudioManager GameObject:**
-   - In Hierarchy, find `AudioManager`
 
+   - In Hierarchy, find `AudioManager`
 3. **Assign Audio Clips:**
+
    - In Inspector, `AudioManager` component:
      - `Background Music`: Drag music file from `Assets/Audio/Music/`
      - `Player Attack Sound`: Drag from `Assets/Audio/SFX/`
@@ -1511,8 +1536,8 @@
      - `Player Hurt Sound`: Drag from `Assets/Audio/SFX/`
      - `Enemy Death Sound`: Drag from `Assets/Audio/SFX/`
      - `Footstep Sound`: Drag from `Assets/Audio/SFX/`
-
 4. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -1522,8 +1547,8 @@
 ### Step 15.1: Set Up Multiple Light Sources
 
 1. **Open `Main.unity` scene**
-
 2. **Configure Directional Light (Sun):**
+
    - Select `Directional Light` in Hierarchy
    - In Inspector:
      - `Transform`:
@@ -1533,8 +1558,8 @@
        - `Color`: Light yellow (R=255, G=245, B=220)
        - `Intensity`: 1.2
        - `Shadows`: `Soft Shadows`
-
 3. **Create Point Lights (Lanterns):**
+
    - Right-click in Hierarchy
    - `Light → Point Light`
    - Name: `Lantern1`
@@ -1547,13 +1572,13 @@
        - `Intensity`: 2
        - `Range`: 10
        - `Shadows`: `Soft Shadows`
-
 4. **Create More Point Lights:**
+
    - Duplicate `Lantern1` 4-5 times
    - Position them around the scene
    - Vary colors slightly (warm oranges, yellows)
-
 5. **Create Spot Lights (Optional):**
+
    - Right-click in Hierarchy
    - `Light → Spot Light`
    - Name: `SpotLight1`
@@ -1568,14 +1593,14 @@
        - `Range`: 15
        - `Spot Angle`: 45
        - `Shadows`: `Soft Shadows`
-
 6. **Configure Light Settings:**
+
    - `Edit → Project Settings → Quality`
    - Under `Rendering`:
      - `Pixel Light Count`: 4 or higher
      - `Shadows`: `All` or `Hard and Soft`
-
 7. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -1585,11 +1610,12 @@
 ### Step 16.1: Create Click Effect
 
 1. **Create Particle System:**
+
    - Right-click in Hierarchy
    - `Effects → Particle System`
    - Name: `ClickEffect`
-
 2. **Configure Particle System:**
+
    - Select `ClickEffect`
    - In Inspector, `Particle System` component:
      - `Duration`: 0.5
@@ -1611,12 +1637,12 @@
      - `Size over Lifetime`:
        - Enable checkbox
        - Set curve: 1 → 0
-
 3. **Create Prefab:**
+
    - Drag `ClickEffect` to `Assets/Prefabs/`
    - Delete from scene
-
 4. **Assign to PlayerController:**
+
    - Select `Player` GameObject
    - In Inspector, `PlayerController` component:
      - `Click Effect`: Drag `ClickEffect` prefab
@@ -1624,11 +1650,12 @@
 ### Step 16.2: Create Hit Effect
 
 1. **Create Hit Particle System:**
+
    - Right-click in Hierarchy
    - `Effects → Particle System`
    - Name: `HitEffect`
-
 2. **Configure Hit Effect:**
+
    - In Inspector:
      - `Duration`: 0.3
      - `Start Lifetime`: 0.3
@@ -1640,30 +1667,32 @@
        - `Bursts`: Count 8
      - `Shape`: `Sphere`, Radius 0.3
      - `Color over Lifetime`: Red → Transparent
-
 3. **Create Prefab:**
+
    - Drag to `Assets/Prefabs/`
    - Delete from scene
-
 4. **Assign to PlayerController and EnemyAI:**
+
    - `PlayerController` → `Hit Effect`: Drag prefab
    - `EnemyAI` → `Hit Effect`: Drag prefab
 
 ### Step 16.3: Create Item Pickup Effect
 
 1. **Create Pickup Particle System:**
+
    - Similar process
    - Name: `PickupEffect`
    - Color: Gold/Yellow
    - Shape: `Sphere`
    - Burst: 20 particles
-
 2. **Create Prefab and Assign:**
+
    - Same process
 
 ### Step 16.4: Create Environmental Effects
 
 1. **Create Sand Particles:**
+
    - Right-click in Hierarchy
    - `Effects → Particle System`
    - Name: `SandParticles`
@@ -1677,8 +1706,8 @@
      - `Emission`: `Rate over Time`: 20
      - `Shape`: `Box`
      - `Simulation Space`: `World`
-
 2. **Position in Scene:**
+
    - Place where you want sand effects
    - Create multiple instances
 
@@ -1689,19 +1718,19 @@
 ### Step 17.1: Set Up NavMesh
 
 1. **Open `Main.unity` scene**
-
 2. **Mark Objects as Navigation Static:**
+
    - Select `Ground` plane
    - In Inspector, top-right:
      - Click `Static` dropdown
      - Check `Navigation Static`
    - Select all buildings
    - Mark as `Navigation Static`
-
 3. **Open Navigation Window:**
-   - `Window → AI → Navigation`
 
+   - `Window → AI → Navigation`
 4. **Bake NavMesh:**
+
    - In Navigation window, `Bake` tab:
      - `Agent Radius`: 0.5
      - `Agent Height`: 2
@@ -1711,19 +1740,19 @@
      - `Jump Distance`: 0
    - Click `Bake` button
    - Wait for blue NavMesh to appear in Scene view
-
 5. **Verify NavMesh:**
+
    - In Scene view, you should see blue areas
    - These are walkable areas
    - Enemies and player can only move on blue areas
-
 6. **Set Up NavMesh Obstacles (Optional):**
+
    - If you want moving obstacles:
      - Select obstacle GameObject
      - `Add Component` → `Nav Mesh Obstacle`
      - Configure shape and size
-
 7. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -1733,13 +1762,13 @@
 ### Step 18.1: Create Terrain
 
 1. **Open `Main.unity` scene** (or `Level2.unity`)
-
 2. **Create Terrain:**
+
    - Right-click in Hierarchy
    - `3D Object → Terrain`
    - Name: `Terrain`
-
 3. **Configure Terrain:**
+
    - Select `Terrain`
    - In Inspector, `Terrain` component:
      - `Terrain Data`: Click `Create New...`
@@ -1747,8 +1776,8 @@
      - `Terrain Width`: 200
      - `Terrain Length`: 200
      - `Terrain Height`: 30
-
 4. **Import Terrain Textures:**
+
    - Get terrain textures (sand, dirt, grass)
    - Import to `Assets/Textures/`
    - Configure textures:
@@ -1757,8 +1786,8 @@
        - `Texture Type`: `Default`
        - `Max Size`: 512 or 1024
        - Click `Apply`
-
 5. **Paint Terrain:**
+
    - Select `Terrain` in Hierarchy
    - In Inspector, `Paint Texture` tool:
      - Click `Edit Terrain Textures...`
@@ -1767,22 +1796,22 @@
      - Click `Add`
      - Paint entire terrain with sand
      - Add more textures and paint different areas
-
 6. **Sculpt Terrain (Optional):**
+
    - Use `Raise/Lower Terrain` tool
    - Create hills and valleys
    - Use `Smooth Height` to smooth
-
 7. **Place Objects on Terrain:**
+
    - Position buildings and objects on terrain
    - Use `Snap to Terrain` (right-click in Scene view)
-
 8. **Rebake NavMesh:**
+
    - `Window → AI → Navigation`
    - Click `Bake`
    - NavMesh will include terrain
-
 9. **Save Scene:**
+
    - `File → Save`
 
 ---
@@ -1792,9 +1821,10 @@
 ### Step 19.1: Add Scenes to Build
 
 1. **Open Build Settings:**
-   - `File → Build Settings...`
 
+   - `File → Build Settings...`
 2. **Add Scenes:**
+
    - Click `Add Open Scenes` (adds current scene)
    - OR drag scenes from Project window to `Scenes In Build` list
    - Add in this order:
@@ -1803,15 +1833,15 @@
      3. `Tutorial` (Index 2)
      4. `Main` (Index 3)
      5. `Level2` (Index 4)
-
 3. **Set Splash Screen as First Scene:**
+
    - In `Scenes In Build`, ensure `SplashScreen` is at index 0
    - Drag to reorder if needed
-
 4. **Close Build Settings:**
-   - Click `X` or press Escape
 
+   - Click `X` or press Escape
 5. **Save All Scenes:**
+
    - `File → Save All` (Ctrl+Shift+S / Cmd+Shift+S)
 
 ---
@@ -1821,13 +1851,14 @@
 ### Step 20.1: Test Each Scene
 
 1. **Test Splash Screen:**
+
    - Open `SplashScreen.unity`
    - Click Play
    - Verify:
      - Title appears
      - Transitions to MainMenu after 3 seconds
-
 2. **Test Main Menu:**
+
    - Open `MainMenu.unity`
    - Click Play
    - Verify:
@@ -1835,23 +1866,23 @@
      - Start Game loads Main scene
      - Options opens options panel
      - Quit exits (in editor, stops play mode)
-
 3. **Test Options Menu:**
+
    - In MainMenu, click Options
    - Verify:
      - Sliders work
      - Difficulty dropdown works
      - Settings save (restart game, check if saved)
-
 4. **Test Tutorial:**
+
    - Open `Tutorial.unity`
    - Click Play
    - Verify:
      - Tutorial text appears
      - Skip button works
      - Transitions to Main scene
-
 5. **Test Main Game Scene:**
+
    - Open `Main.unity`
    - Click Play
    - Verify:
@@ -1865,8 +1896,8 @@
      - Items can be picked up
      - Pause menu works (ESC)
      - End menu appears on win/lose
-
 6. **Test Save/Load:**
+
    - In game, pause
    - Click Save (if button exists)
    - Quit to menu
@@ -1876,27 +1907,28 @@
 ### Step 20.2: Common Issues Checklist
 
 - **Player not moving:**
+
   - Check NavMesh is baked
   - Check Player has NavMesh Agent
   - Check Clickable Layers includes Ground layer
-
 - **Enemies not spawning:**
+
   - Check EnemySpawner has prefabs assigned
   - Check spawn points exist
   - Check GameManager state is "Playing"
   - Check difficulty settings assigned
-
 - **UI not updating:**
+
   - Check UIManager has all references assigned
   - Check GameManager exists in scene
   - Check events are firing (use Debug.Log)
-
 - **Audio not playing:**
+
   - Check AudioManager has clips assigned
   - Check AudioManager GameObject exists
   - Check volume settings
-
 - **Scene transitions not working:**
+
   - Check SceneTransitionManager exists
   - Check scene names are correct
   - Check scenes are in Build Settings
@@ -1904,11 +1936,12 @@
 ### Step 20.3: Performance Check
 
 1. **Check Frame Rate:**
+
    - `Window → Analysis → Profiler`
    - Click Play
    - Monitor FPS (should be 60+)
-
 2. **Optimize if Needed:**
+
    - Reduce particle counts
    - Reduce light count
    - Use LOD groups for models
@@ -1921,41 +1954,43 @@
 ### Creating Materials
 
 1. **Create Material:**
+
    - Right-click in `Assets/Materials/`
    - `Create → Material`
    - Name: `SandMaterial`
-
 2. **Configure Material:**
+
    - In Inspector:
      - `Albedo`: Assign texture or set color
      - `Metallic`: 0
      - `Smoothness`: 0.3
      - `Normal Map`: Assign if you have one
-
 3. **Assign to Objects:**
+
    - Drag material onto GameObject in Scene or Hierarchy
 
 ### Creating Animator Controllers
 
 1. **Create Animator Controller:**
+
    - Right-click in Project
    - `Create → Animator Controller`
    - Name: `PlayerAnimator`
-
 2. **Set Up States:**
+
    - Double-click to open Animator window
    - Right-click → `Create State → Empty`
    - Name: `Idle`
    - Assign Idle animation clip
    - Repeat for `Walk`, `Attack`, `Death`
-
 3. **Create Transitions:**
+
    - Click on state
    - Right-click → `Make Transition`
    - Drag to target state
    - Configure conditions in Inspector
-
 4. **Assign to GameObject:**
+
    - Select GameObject
    - In Animator component, assign controller
 
@@ -1963,9 +1998,10 @@
 
 ## Conclusion
 
-You now have a complete Unity setup for "The Last Oasis"! 
+You now have a complete Unity setup for "The Last Oasis"!
 
 **Next Steps:**
+
 1. Test everything thoroughly
 2. Add your own art assets
 3. Fine-tune gameplay balance
@@ -1973,10 +2009,10 @@ You now have a complete Unity setup for "The Last Oasis"!
 5. Build and test final game
 
 **Remember:**
+
 - Save frequently (Ctrl+S / Cmd+S)
 - Test each feature as you add it
 - Use the Console window to check for errors
 - Refer to Unity documentation for specific features
 
 Good luck with your game!
-

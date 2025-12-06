@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class PauseMenuController : MonoBehaviour
 {
@@ -13,11 +14,15 @@ public class PauseMenuController : MonoBehaviour
 
     [Header("Scene Names")]
     [SerializeField] private string mainMenuSceneName = "MainMenu";
+    [SerializeField] private GameObject optionsMenuPanel; // Reference to options menu if it exists
 
     private bool isPaused = false;
 
     void Start()
     {
+        // Ensure EventSystem exists
+        EnsureEventSystem();
+        
         // Hide pause menu initially
         if (pauseMenuPanel != null)
         {
@@ -25,37 +30,64 @@ public class PauseMenuController : MonoBehaviour
         }
 
         // Setup button listeners
-        if (resumeButton != null)
+        SetupButton(resumeButton, ResumeGame, "Resume");
+        SetupButton(restartButton, RestartGame, "Restart");
+        SetupButton(mainMenuButton, GoToMainMenu, "Main Menu");
+        SetupButton(quitButton, QuitGame, "Quit");
+    }
+
+    void EnsureEventSystem()
+    {
+        // Check if EventSystem exists in the scene
+        if (EventSystem.current == null)
         {
-            resumeButton.onClick.AddListener(ResumeGame);
+            Debug.LogError("PauseMenuController: No EventSystem found! Creating one...");
+            GameObject eventSystem = new GameObject("EventSystem");
+            eventSystem.AddComponent<EventSystem>();
+            eventSystem.AddComponent<StandaloneInputModule>();
+        }
+    }
+
+    void SetupButton(Button button, UnityEngine.Events.UnityAction action, string buttonName)
+    {
+        if (button == null)
+        {
+            Debug.LogWarning($"PauseMenuController: {buttonName} button is not assigned!");
+            return;
         }
 
-        if (restartButton != null)
+        // Ensure button is interactable
+        if (!button.interactable)
         {
-            restartButton.onClick.AddListener(RestartGame);
+            Debug.LogWarning($"PauseMenuController: {buttonName} button is not interactable! Enabling it...");
+            button.interactable = true;
         }
 
-        if (mainMenuButton != null)
-        {
-            mainMenuButton.onClick.AddListener(GoToMainMenu);
-        }
-
-        if (quitButton != null)
-        {
-            quitButton.onClick.AddListener(QuitGame);
-        }
+        // Remove existing listeners to avoid duplicates
+        button.onClick.RemoveAllListeners();
+        
+        // Add listener
+        button.onClick.AddListener(action);
+        Debug.Log($"PauseMenuController: {buttonName} button listener added successfully. Button is interactable: {button.interactable}");
     }
 
     void Update()
     {
+        // Don't handle Esc if options menu is open (let OptionsMenuController handle it)
+        if (optionsMenuPanel != null && optionsMenuPanel.activeSelf)
+        {
+            return;
+        }
+
         // Check for pause input (handled by GameManager, but we can also check here as backup)
+        // Only handle Esc if pause menu is visible or game is playing
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isPaused)
+            if (isPaused && pauseMenuPanel != null && pauseMenuPanel.activeSelf)
             {
                 ResumeGame();
             }
-            else
+            else if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Playing)
             {
                 PauseGame();
             }
@@ -74,6 +106,7 @@ public class PauseMenuController : MonoBehaviour
 
     public void ResumeGame()
     {
+        Debug.Log("PauseMenuController: ResumeGame called!");
         if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Paused)
         {
             GameManager.Instance.ResumeGame();
@@ -84,6 +117,7 @@ public class PauseMenuController : MonoBehaviour
 
     public void RestartGame()
     {
+        Debug.Log("PauseMenuController: RestartGame called!");
         Time.timeScale = 1f;
         if (GameManager.Instance != null)
         {
@@ -97,6 +131,7 @@ public class PauseMenuController : MonoBehaviour
 
     public void GoToMainMenu()
     {
+        Debug.Log("PauseMenuController: GoToMainMenu called!");
         Time.timeScale = 1f;
         
         if (SceneTransitionManager.Instance != null)
@@ -111,6 +146,7 @@ public class PauseMenuController : MonoBehaviour
 
     public void QuitGame()
     {
+        Debug.Log("PauseMenuController: QuitGame called!");
         #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
         #else
