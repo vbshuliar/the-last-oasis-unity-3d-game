@@ -10,6 +10,10 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button optionsButton;
     [SerializeField] private Button quitButton;
 
+    [Header("Options Menu")]
+    [SerializeField] private OptionsMenuController optionsMenuController;
+    [SerializeField] private GameObject optionsMenuPanel;
+
     [Header("Scene Names")]
     [SerializeField] private string gameSceneName = "Main";
     [SerializeField] private string tutorialSceneName = "Tutorial";
@@ -61,6 +65,23 @@ public class MainMenuController : MonoBehaviour
 
     public void OnOptionsClicked()
     {
+        // If options menu panel exists in the same scene, show it
+        if (optionsMenuPanel != null)
+        {
+            optionsMenuPanel.SetActive(true);
+        }
+        // Otherwise, load the options scene
+        else if (!string.IsNullOrEmpty(optionsSceneName))
+        {
+            if (SceneTransitionManager.Instance != null)
+            {
+                SceneTransitionManager.Instance.LoadScene(optionsSceneName);
+            }
+            else
+            {
+                SceneManager.LoadScene(optionsSceneName);
+            }
+        }
     }
 
     public void OnQuitClicked()

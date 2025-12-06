@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
@@ -8,10 +9,15 @@ public class OptionsMenuController : MonoBehaviour
     [SerializeField] private Slider musicVolumeSlider;
     [SerializeField] private Slider sfxVolumeSlider;
     [SerializeField] private TMP_Dropdown difficultyDropdown;
+    [SerializeField] private Button backButton;
+    [SerializeField] private GameObject optionsMenuPanel;
 
     [Header("Settings")]
     [SerializeField] private float defaultMusicVolume = 0.7f;
     [SerializeField] private float defaultSFXVolume = 0.8f;
+
+    [Header("Scene Names")]
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
 
     void Start()
     {
@@ -32,6 +38,11 @@ public class OptionsMenuController : MonoBehaviour
         {
             difficultyDropdown.onValueChanged.AddListener(OnDifficultyChanged);
         }
+
+        if (backButton != null)
+        {
+            backButton.onClick.AddListener(OnBackClicked);
+        }
     }
 
     void LoadSettings()
@@ -50,11 +61,29 @@ public class OptionsMenuController : MonoBehaviour
             sfxVolumeSlider.value = sfxVolume;
         }
 
-        // Load difficulty
-        if (difficultyDropdown != null && GameManager.Instance != null)
+        // Load difficulty from PlayerPrefs (with fallback to GameManager if available)
+        if (difficultyDropdown != null)
         {
-            Difficulty currentDifficulty = GameManager.Instance.GetDifficulty();
-            difficultyDropdown.value = (int)currentDifficulty;
+            int savedDifficulty = 0;
+            
+            // Try to load from PlayerPrefs first
+            if (PlayerPrefs.HasKey("Difficulty"))
+            {
+                savedDifficulty = PlayerPrefs.GetInt("Difficulty");
+            }
+            // Fallback to GameManager if PlayerPrefs doesn't have it
+            else if (GameManager.Instance != null)
+            {
+                savedDifficulty = (int)GameManager.Instance.GetDifficulty();
+            }
+            
+            difficultyDropdown.value = savedDifficulty;
+            
+            // Update GameManager if it exists to keep them in sync
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.SetDifficulty((Difficulty)savedDifficulty);
+            }
         }
     }
 
@@ -86,6 +115,11 @@ public class OptionsMenuController : MonoBehaviour
     {
         Difficulty difficulty = (Difficulty)value;
         
+        // Save directly to PlayerPrefs to ensure persistence
+        PlayerPrefs.SetInt("Difficulty", (int)difficulty);
+        PlayerPrefs.Save();
+        
+        // Update GameManager if it exists to keep them in sync
         if (GameManager.Instance != null)
         {
             GameManager.Instance.SetDifficulty(difficulty);
@@ -94,8 +128,23 @@ public class OptionsMenuController : MonoBehaviour
 
     public void OnBackClicked()
     {
-        // This will be called by a back button
-        // The actual navigation depends on your UI setup
+        // If options menu panel exists in the same scene, hide it
+        if (optionsMenuPanel != null)
+        {
+            optionsMenuPanel.SetActive(false);
+        }
+        // Otherwise, load the main menu scene
+        else if (!string.IsNullOrEmpty(mainMenuSceneName))
+        {
+            if (SceneTransitionManager.Instance != null)
+            {
+                SceneTransitionManager.Instance.LoadScene(mainMenuSceneName);
+            }
+            else
+            {
+                SceneManager.LoadScene(mainMenuSceneName);
+            }
+        }
     }
 
     void OnDestroy()
@@ -114,6 +163,11 @@ public class OptionsMenuController : MonoBehaviour
         if (difficultyDropdown != null)
         {
             difficultyDropdown.onValueChanged.RemoveAllListeners();
+        }
+
+        if (backButton != null)
+        {
+            backButton.onClick.RemoveAllListeners();
         }
     }
 }
