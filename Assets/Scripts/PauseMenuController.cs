@@ -11,6 +11,7 @@ public class PauseMenuController : MonoBehaviour
     [SerializeField] private Button restartButton;
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] private Button saveGameButton;
 
     [Header("Scene Names")]
     [SerializeField] private string mainMenuSceneName = "MainMenu";
@@ -33,6 +34,7 @@ public class PauseMenuController : MonoBehaviour
         SetupButton(restartButton, RestartGame, "Restart");
         SetupButton(mainMenuButton, GoToMainMenu, "Main Menu");
         SetupButton(quitButton, QuitGame, "Quit");
+        SetupButton(saveGameButton, SaveGame, "Save Game");
     }
 
     void EnsureEventSystem()
@@ -149,6 +151,19 @@ public class PauseMenuController : MonoBehaviour
 #endif
     }
 
+    public void SaveGame()
+    {
+        Debug.Log("PauseMenuController: SaveGame called!");
+        if (SaveSystem.Instance != null)
+        {
+            SaveSystem.Instance.SaveGame();
+        }
+        else
+        {
+            Debug.LogWarning("PauseMenuController: SaveSystem not available.");
+        }
+    }
+
     void ShowPauseMenu()
     {
         if (pauseMenuPanel != null)
@@ -204,6 +219,11 @@ public class PauseMenuController : MonoBehaviour
         if (quitButton != null)
         {
             quitButton.onClick.RemoveAllListeners();
+        }
+
+        if (saveGameButton != null)
+        {
+            saveGameButton.onClick.RemoveAllListeners();
         }
     }
 }

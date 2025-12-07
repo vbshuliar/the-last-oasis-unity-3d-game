@@ -12,6 +12,7 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private Button tutorialButton;
     [SerializeField] private Button optionsButton;
     [SerializeField] private Button quitButton;
+    [SerializeField] private Button loadGameButton;
 
     [Header("Options Menu")]
     [SerializeField] private OptionsMenuController optionsMenuController;
@@ -26,13 +27,14 @@ public class MainMenuController : MonoBehaviour
     {
         // Ensure EventSystem exists
         EnsureEventSystem();
-        
+
         // Verify and setup buttons
         SetupButton(startLevel1Button, OnStartLevel1Clicked, "Start Level 1");
         SetupButton(startLevel2Button, OnStartLevel2Clicked, "Start Level 2");
         SetupButton(tutorialButton, OnTutorialClicked, "Tutorial");
         SetupButton(optionsButton, OnOptionsClicked, "Options");
         SetupButton(quitButton, OnQuitClicked, "Quit");
+        SetupButton(loadGameButton, OnLoadGameClicked, "Load Game");
 
         Time.timeScale = 1f;
     }
@@ -92,7 +94,7 @@ public class MainMenuController : MonoBehaviour
 
         // remove existing listeners to avoid duplicates
         button.onClick.RemoveAllListeners();
-        
+
         // add listener
         button.onClick.AddListener(action);
         Debug.Log($"MainMenuController: {buttonName} button listener added successfully. Button is interactable: {button.interactable}, Active: {button.gameObject.activeInHierarchy}");
@@ -150,14 +152,27 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    public void OnLoadGameClicked()
+    {
+        Debug.Log("MainMenuController: OnLoadGameClicked called!");
+        if (SaveSystem.Instance != null && SaveSystem.Instance.HasSaveFile())
+        {
+            SaveSystem.Instance.LoadGame();
+        }
+        else
+        {
+            Debug.LogWarning("MainMenuController: No save file found.");
+        }
+    }
+
     public void OnQuitClicked()
     {
         Debug.Log("MainMenuController: OnQuitClicked called!");
-        #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-        #else
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
             Application.Quit();
-        #endif
+#endif
     }
 
     void OnDestroy()
@@ -185,6 +200,11 @@ public class MainMenuController : MonoBehaviour
         if (quitButton != null)
         {
             quitButton.onClick.RemoveAllListeners();
+        }
+
+        if (loadGameButton != null)
+        {
+            loadGameButton.onClick.RemoveAllListeners();
         }
     }
 }

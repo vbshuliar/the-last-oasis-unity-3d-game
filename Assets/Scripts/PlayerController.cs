@@ -84,11 +84,18 @@ public class PlayerController : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            if (actor != null)
+            SaveSystem saveSystem = SaveSystem.Instance;
+            bool restoringFromSave = saveSystem != null && saveSystem.IsRestoringSave;
+
+            if (actor != null && !restoringFromSave)
             {
                 GameManager.Instance.ApplyDifficultyToPlayer(actor, actor.maxHealth);
             }
-            GameManager.Instance.StartGame();
+
+            if (!restoringFromSave)
+            {
+                GameManager.Instance.StartGame();
+            }
         }
     }
 

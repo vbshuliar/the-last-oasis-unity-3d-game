@@ -111,6 +111,12 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        bool restoringFromSave = SaveSystem.Instance != null && SaveSystem.Instance.IsRestoringSave;
+        if (restoringFromSave)
+        {
+            // Skip reset when a save load is about to reapply state.
+            return;
+        }
         CurrentState = GameState.Playing;
         gameStarted = true;
         timeRemaining = GameDurationSeconds;
@@ -122,6 +128,29 @@ public class GameManager : MonoBehaviour
         OnScoreUpdated?.Invoke(currentScore);
         OnKillsUpdated?.Invoke(enemiesKilled);
         OnItemsCollectedUpdated?.Invoke(itemsCollected);
+    }
+
+    public void ApplyLoadedGameData(GameData data)
+    {
+        if (data == null)
+        {
+            return;
+        }
+
+        CurrentState = GameState.Playing;
+        gameStarted = true;
+
+        timeRemaining = Mathf.Clamp(data.timeRemaining, 0f, GameDurationSeconds);
+        currentScore = Mathf.Max(0, data.currentScore);
+        enemiesKilled = Mathf.Max(0, data.enemiesKilled);
+        itemsCollected = Mathf.Max(0, data.itemsCollected);
+
+        OnTimeUpdated?.Invoke(timeRemaining);
+        OnScoreUpdated?.Invoke(currentScore);
+        OnKillsUpdated?.Invoke(enemiesKilled);
+        OnItemsCollectedUpdated?.Invoke(itemsCollected);
+
+        Time.timeScale = 1f;
     }
 
     public void PauseGame()

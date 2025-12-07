@@ -52,6 +52,12 @@ public class Actor : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
+    public void SetCurrentHealth(int newCurrentHealth)
+    {
+        currentHealth = Mathf.Clamp(newCurrentHealth, 0, maxHealth);
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
     void Death()
     {
         OnDeath?.Invoke(this);
