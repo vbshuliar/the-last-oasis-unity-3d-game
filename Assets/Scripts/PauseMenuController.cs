@@ -22,7 +22,7 @@ public class PauseMenuController : MonoBehaviour
     {
         // Ensure EventSystem exists
         EnsureEventSystem();
-        
+
         // Hide pause menu initially
         if (pauseMenuPanel != null)
         {
@@ -65,7 +65,7 @@ public class PauseMenuController : MonoBehaviour
 
         // remove existing listeners to avoid duplicates
         button.onClick.RemoveAllListeners();
-        
+
         // add listener
         button.onClick.AddListener(action);
         Debug.Log($"PauseMenuController: {buttonName} button listener added successfully. Button is interactable: {button.interactable}");
@@ -79,14 +79,16 @@ public class PauseMenuController : MonoBehaviour
             return;
         }
 
-        // check for pause input (handled by gamemanager, but we can also check here as backup)
-        // only handle esc if pause menu is visible or game is playing
+        // Check for ESC key input
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (isPaused && pauseMenuPanel != null && pauseMenuPanel.activeSelf)
+            // If pause panel is visible, ESC should resume (same as clicking Resume button)
+            if (pauseMenuPanel != null && pauseMenuPanel.activeSelf)
             {
-                ResumeGame();
+                ResumeGame(); // Call the exact same method as the Resume button
+                return;
             }
+            // If game is playing, pause it
             else if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Playing)
             {
                 PauseGame();
@@ -133,7 +135,7 @@ public class PauseMenuController : MonoBehaviour
     {
         Debug.Log("PauseMenuController: GoToMainMenu called!");
         Time.timeScale = 1f;
-        
+
         if (SceneTransitionManager.Instance != null)
         {
             SceneTransitionManager.Instance.LoadScene(mainMenuSceneName);
@@ -147,11 +149,11 @@ public class PauseMenuController : MonoBehaviour
     public void QuitGame()
     {
         Debug.Log("PauseMenuController: QuitGame called!");
-        #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-        #else
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
             Application.Quit();
-        #endif
+#endif
     }
 
     void ShowPauseMenu()

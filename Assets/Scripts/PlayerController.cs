@@ -41,6 +41,9 @@ public class PlayerController : MonoBehaviour
     bool isPoweredUp = false;
     Vector3 originalScale;
     float originalSpeed;
+    int originalDamage;
+    float currentDamageMultiplier = 1f;
+    Coroutine damageBoostCoroutine;
 
     void Awake()
     {
@@ -71,6 +74,7 @@ public class PlayerController : MonoBehaviour
 
         originalScale = transform.localScale;
         originalSpeed = agent.speed;
+        originalDamage = attackDamage;
 
         // subscribe to death event so we know when player dies
         if (actor != null)
@@ -236,7 +240,8 @@ public class PlayerController : MonoBehaviour
         { target = null; return; }
 
         Instantiate(hitEffect, target.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
-        target.GetComponent<Actor>().TakeDamage(attackDamage);
+        int finalDamage = Mathf.RoundToInt(attackDamage * currentDamageMultiplier);
+        target.GetComponent<Actor>().TakeDamage(finalDamage);
     }
 
     void ResetBusyState()
@@ -266,6 +271,15 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(PowerUpCoroutine(sizeMultiplier, speedMultiplier, duration));
     }
 
+    public void ApplyDamageBoost(float damageMultiplier, float duration)
+    {
+        if (damageBoostCoroutine != null)
+        {
+            StopCoroutine(damageBoostCoroutine);
+        }
+        damageBoostCoroutine = StartCoroutine(DamageBoostCoroutine(damageMultiplier, duration));
+    }
+
     // coroutine runs over multiple frames and can wait for time to pass
     IEnumerator PowerUpCoroutine(float sizeMultiplier, float speedMultiplier, float duration)
     {
@@ -281,6 +295,16 @@ public class PlayerController : MonoBehaviour
         agent.speed = originalSpeed;
 
         isPoweredUp = false;
+    }
+
+    IEnumerator DamageBoostCoroutine(float damageMultiplier, float duration)
+    {
+        currentDamageMultiplier = damageMultiplier;
+        
+        yield return new WaitForSeconds(duration);
+        
+        currentDamageMultiplier = 1f;
+        damageBoostCoroutine = null;
     }
 
     void OnDestroy()

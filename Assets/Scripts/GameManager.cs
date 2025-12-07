@@ -76,6 +76,8 @@ public class GameManager : MonoBehaviour
             UpdateTimer();
             HandlePauseInput();
         }
+        // Don't handle ESC when paused - let PauseMenuController handle it
+        // This ensures ESC while paused always triggers Resume button functionality
     }
 
     void UpdateTimer()
@@ -94,16 +96,14 @@ public class GameManager : MonoBehaviour
 
     void HandlePauseInput()
     {
+        // Only handle pause input when playing - let PauseMenuController handle resume
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (CurrentState == GameState.Playing)
             {
                 PauseGame();
             }
-            else if (CurrentState == GameState.Paused)
-            {
-                ResumeGame();
-            }
+            // Don't handle ESC when paused - PauseMenuController will handle it
         }
     }
 

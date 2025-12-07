@@ -2746,6 +2746,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 488e23cc9a3584140b2280e97d9d59a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioManager
+  musicSource: {fileID: 0}
+  sfxSource: {fileID: 0}
+  backgroundMusic: {fileID: 0}
+  playerAttackSound: {fileID: 0}
+  enemyAttackSound: {fileID: 0}
+  itemPickupSound: {fileID: 0}
+  playerHurtSound: {fileID: 0}
+  enemyDeathSound: {fileID: 0}
+  footstepSound: {fileID: 0}
+  musicVolume: 0.7
+  sfxVolume: 0.8
 --- !u!4 &467932186
 Transform:
   m_ObjectHideFlags: 0
@@ -3125,6 +3136,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable
   interactionType: 1
+  itemType: 1
+  sizeMultiplier: 2
+  speedMultiplier: 2
+  duration: 5
+  speedBoostMultiplier: 2
+  speedBoostDuration: 10
+  damageBoostMultiplier: 2
+  damageBoostDuration: 10
 --- !u!114 &535845010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3314,9 +3333,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 579806245}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6fdb0b8f88735364d8babadc2dba6e3c, type: 3}
+  m_Script: {fileID: 11500000, guid: a6aafbfa17a3ebe439bd6d7c83796bf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EndMenuController
+  endMenuPanel: {fileID: 0}
+  titleText: {fileID: 0}
+  scoreText: {fileID: 0}
+  timeText: {fileID: 0}
+  killsText: {fileID: 0}
+  highScoreText: {fileID: 0}
+  restartButton: {fileID: 0}
+  mainMenuButton: {fileID: 0}
+  quitButton: {fileID: 0}
+  mainMenuSceneName: MainMenu
 --- !u!4 &579806247
 Transform:
   m_ObjectHideFlags: 0
@@ -3855,6 +3884,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable
   interactionType: 0
+  itemType: 1
+  sizeMultiplier: 2
+  speedMultiplier: 2
+  duration: 5
+  speedBoostMultiplier: 2
+  speedBoostDuration: 10
+  damageBoostMultiplier: 2
+  damageBoostDuration: 10
 --- !u!114 &741506643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5560,9 +5597,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1119286526}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 51bdeb1d6ca5eb64f88da9d1780f5942, type: 3}
+  m_Script: {fileID: 11500000, guid: 66213e47047a614408cbda0ce6102bb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PauseMenuController
+  pauseMenuPanel: {fileID: 0}
+  resumeButton: {fileID: 0}
+  restartButton: {fileID: 0}
+  mainMenuButton: {fileID: 0}
+  quitButton: {fileID: 0}
+  mainMenuSceneName: MainMenu
+  optionsMenuPanel: {fileID: 0}
 --- !u!4 &1119286528
 Transform:
   m_ObjectHideFlags: 0
@@ -6107,9 +6151,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1188674257}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e08e0a1b86c59ad42adc9ce1667f44d6, type: 3}
+  m_Script: {fileID: 11500000, guid: 5f67e23f53133e14388b591069e65a18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  healthBar: {fileID: 331515314}
+  timerText: {fileID: 209380201}
+  scoreText: {fileID: 603343756}
+  killsText: {fileID: 396781352}
+  itemsText: {fileID: 186267725}
+  playerActor: {fileID: 1156329866}
 --- !u!4 &1188674259
 Transform:
   m_ObjectHideFlags: 0
@@ -7746,6 +7796,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3745976a158c0e546a5f0b722d75f3bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneTransitionManager
+  fadeDuration: 1
+  fadeImage: {fileID: 0}
 --- !u!4 &1926269756
 Transform:
   m_ObjectHideFlags: 0
@@ -8329,9 +8381,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1995530900}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a27ff652713fea5418f30b1585bde4cf, type: 3}
+  m_Script: {fileID: 11500000, guid: bdd2c5951f031ed47bc7f1dface3b25e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  gameDuration: 300
+  currentDifficulty: 0
+  pointsPerKill: 10
+  pointsPerSecond: 1
+  pointsPerPickup: 5
 --- !u!4 &1995530902
 Transform:
   m_ObjectHideFlags: 0

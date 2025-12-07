@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum ItemType { GreenPotion, HealthPack, SpeedBoost, DamageBoost }
+public enum ItemType { GreenPotion, HealthPack, SpeedBoost, DamageBoost, Star }
 
 // handles items that player can pick up like health packs and power ups
 public class ItemPickup : MonoBehaviour
@@ -26,24 +26,39 @@ public class ItemPickup : MonoBehaviour
 
     public void ApplyEffect(PlayerController player)
     {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.AddItemCollected();
-        }
-
         switch (itemType)
         {
             case ItemType.GreenPotion:
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.AddItemCollected();
+                }
                 player.ApplyGreenPotionEffect(sizeMultiplier, speedMultiplier, duration);
                 break;
             case ItemType.HealthPack:
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.AddItemCollected();
+                }
                 ApplyHealthPack(player);
                 break;
             case ItemType.SpeedBoost:
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.AddItemCollected();
+                }
                 ApplySpeedBoost(player);
                 break;
             case ItemType.DamageBoost:
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.AddItemCollected();
+                }
                 ApplyDamageBoost(player);
+                break;
+            case ItemType.Star:
+                // Star only gives +50 score, doesn't count as regular item collected
+                ApplyStar(player);
                 break;
         }
     }
@@ -53,6 +68,8 @@ public class ItemPickup : MonoBehaviour
         Actor playerActor = player.GetComponent<Actor>();
         if (playerActor != null)
         {
+            // Restore 20% of maximum health
+            int healAmount = Mathf.RoundToInt(playerActor.maxHealth * 0.2f);
             playerActor.Heal(healAmount);
         }
     }
@@ -64,8 +81,16 @@ public class ItemPickup : MonoBehaviour
 
     void ApplyDamageBoost(PlayerController player)
     {
-        // placeholder can be extended later
-        player.ApplyGreenPotionEffect(1f, 1f, damageBoostDuration);
+        player.ApplyDamageBoost(damageBoostMultiplier, damageBoostDuration);
+    }
+
+    void ApplyStar(PlayerController player)
+    {
+        // Star gives +50 score
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.AddScore(50);
+        }
     }
 
     public float GetSizeMultiplier() => sizeMultiplier;
