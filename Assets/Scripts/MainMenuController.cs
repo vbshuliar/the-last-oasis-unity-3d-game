@@ -97,7 +97,16 @@ public class MainMenuController : MonoBehaviour
 
         // add listener
         button.onClick.AddListener(action);
+        button.onClick.AddListener(PlayButtonSound);
         Debug.Log($"MainMenuController: {buttonName} button listener added successfully. Button is interactable: {button.interactable}, Active: {button.gameObject.activeInHierarchy}");
+    }
+
+    void PlayButtonSound()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayButtonClickSound();
+        }
     }
 
     public void OnStartLevel1Clicked()

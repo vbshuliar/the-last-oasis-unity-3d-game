@@ -14,6 +14,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioClip punchClip;
     [SerializeField] AudioClip coinClip;
     [SerializeField] AudioClip potionClip;
+    [SerializeField] AudioClip buttonClip;
 
     [Header("Volumes")]
     [Range(0f, 1f)][SerializeField] float musicVolume = 0.7f;
@@ -136,6 +137,18 @@ public class AudioManager : MonoBehaviour
             default:
                 PlayPotionPickupSound();
                 break;
+        }
+    }
+
+    public void PlayButtonClickSound()
+    {
+        if (buttonClip != null)
+        {
+            PlayUISfx(buttonClip);
+        }
+        else if (coinClip != null || potionClip != null)
+        {
+            PlayUISfx(coinClip != null ? coinClip : potionClip);
         }
     }
 

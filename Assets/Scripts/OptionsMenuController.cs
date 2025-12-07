@@ -41,6 +41,7 @@ public class OptionsMenuController : MonoBehaviour
         if (backButton != null)
         {
             backButton.onClick.AddListener(OnBackClicked);
+            backButton.onClick.AddListener(PlayButtonSound);
         }
     }
 
@@ -150,6 +151,14 @@ public class OptionsMenuController : MonoBehaviour
         else
         {
             Debug.LogWarning("OptionsMenuController: Options menu panel is not assigned!");
+        }
+    }
+
+    void PlayButtonSound()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayButtonClickSound();
         }
     }
 

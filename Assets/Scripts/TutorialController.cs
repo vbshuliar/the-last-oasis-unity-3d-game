@@ -42,9 +42,18 @@ public class TutorialController : MonoBehaviour
 
         // remove existing listeners to avoid duplicates
         button.onClick.RemoveAllListeners();
-        
+
         // add listener
         button.onClick.AddListener(action);
+        button.onClick.AddListener(PlayButtonSound);
+    }
+
+    void PlayButtonSound()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayButtonClickSound();
+        }
     }
 
     public void OnStartLevel1Clicked()

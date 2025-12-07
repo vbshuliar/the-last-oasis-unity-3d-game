@@ -69,7 +69,16 @@ public class PauseMenuController : MonoBehaviour
 
         // add listener
         button.onClick.AddListener(action);
+        button.onClick.AddListener(PlayButtonSound);
         Debug.Log($"PauseMenuController: {buttonName} button listener added successfully. Button is interactable: {button.interactable}");
+    }
+
+    void PlayButtonSound()
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayButtonClickSound();
+        }
     }
 
     void Update()
