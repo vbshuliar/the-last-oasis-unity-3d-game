@@ -1,27 +1,23 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-// basic enemy ai that chases and attacks the player using navmesh pathfinding
-public class EnemyAI : MonoBehaviour
+// boss-specific AI that mirrors the original pursuit-and-attack behaviour
+public class BossAI : MonoBehaviour
 {
     const string IDLE = "Idle";
     const string WALK = "Walk";
     const string ATTACK = "Attack";
 
     [Header("Combat Settings")]
-    [SerializeField] float detectionRange = 10f;
+    [SerializeField] float detectionRange = 100f;
     [SerializeField] float attackRange = 1.5f;
-    [SerializeField] int attackDamage = 1;
+    [SerializeField] int attackDamage = 2;
     [SerializeField] float attackSpeed = 1.0f;
     [SerializeField] float attackDelay = 0.3f;
     [SerializeField] ParticleSystem hitEffect;
 
     [Header("Movement")]
     [SerializeField] float rotationSpeed = 5f;
-    [Header("Flee Behaviour")]
-    [SerializeField, Range(0.05f, 0.95f)] float fleeHealthThreshold = 0.4f;
-    [SerializeField] float fleeDistance = 12f;
-    [SerializeField, Range(0.1f, 1f)] float fleeSpeedMultiplier = 0.5f;
 
     Transform player;
     NavMeshAgent agent;
@@ -29,10 +25,8 @@ public class EnemyAI : MonoBehaviour
     Actor actor;
 
     bool isAttacking = false;
-    bool isFleeing = false;
     float attackAnimationLength = 0f;
     float lastAttackTime = 0f;
-    float baseAgentSpeed = 0f;
 
     void Awake()
     {
@@ -49,7 +43,6 @@ public class EnemyAI : MonoBehaviour
             player = playerObj.transform;
         }
 
-        // find attack animation length by searching through all animation clips
         if (animator != null)
         {
             RuntimeAnimatorController ac = animator.runtimeAnimatorController;
@@ -68,19 +61,13 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
-        // subscribe to death event to notify gamemanager when enemy dies
         if (actor != null)
         {
-            actor.OnDeath += OnEnemyDeath;
-        }
-
-        if (agent != null)
-        {
-            baseAgentSpeed = agent.speed;
+            actor.OnDeath += OnBossDeath;
         }
     }
 
-    void OnEnemyDeath(Actor deadActor)
+    void OnBossDeath(Actor deadActor)
     {
         if (GameManager.Instance != null)
         {
@@ -91,18 +78,6 @@ public class EnemyAI : MonoBehaviour
     void Update()
     {
         if (player == null || actor == null || !actor.IsAlive()) return;
-
-        bool shouldFlee = ShouldFlee();
-        if (shouldFlee)
-        {
-            HandleFleeing();
-            SetAnimations();
-            return;
-        }
-        else if (isFleeing)
-        {
-            ExitFleeState();
-        }
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
@@ -124,85 +99,16 @@ public class EnemyAI : MonoBehaviour
         SetAnimations();
     }
 
-    bool ShouldFlee()
-    {
-        if (actor == null || actor.maxHealth <= 0)
-        {
-            return false;
-        }
-
-        float healthPercent = (float)actor.currentHealth / actor.maxHealth;
-        return healthPercent <= fleeHealthThreshold;
-    }
-
-    void HandleFleeing()
-    {
-        EnterFleeState();
-
-        if (agent == null || player == null)
-        {
-            return;
-        }
-
-        Vector3 fleeDirection = (transform.position - player.position).normalized;
-        if (fleeDirection.sqrMagnitude < 0.01f)
-        {
-            fleeDirection = -player.forward;
-        }
-
-        Vector3 targetPosition = transform.position + fleeDirection * fleeDistance;
-        if (UnityEngine.AI.NavMesh.SamplePosition(targetPosition, out UnityEngine.AI.NavMeshHit hit, fleeDistance, UnityEngine.AI.NavMesh.AllAreas))
-        {
-            agent.SetDestination(hit.position);
-        }
-        else
-        {
-            agent.SetDestination(transform.position + fleeDirection * Mathf.Max(2f, fleeDistance * 0.25f));
-        }
-
-        FaceDirection(fleeDirection);
-        isAttacking = false;
-    }
-
-    void EnterFleeState()
-    {
-        if (agent == null)
-        {
-            return;
-        }
-
-        isFleeing = true;
-        float targetSpeed = baseAgentSpeed > 0f ? baseAgentSpeed * fleeSpeedMultiplier : agent.speed * fleeSpeedMultiplier;
-        agent.speed = targetSpeed;
-    }
-
-    void ExitFleeState()
-    {
-        isFleeing = false;
-        if (agent != null && baseAgentSpeed > 0f)
-        {
-            agent.speed = baseAgentSpeed;
-        }
-    }
-
     void FacePlayer()
     {
         Vector3 direction = (player.position - transform.position).normalized;
-        // keep rotation on horizontal plane only (ignore y axis)
         direction.y = 0;
 
-        FaceDirection(direction);
-    }
-
-    void FaceDirection(Vector3 direction)
-    {
-        if (direction == Vector3.zero)
+        if (direction != Vector3.zero)
         {
-            return;
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
         }
-
-        Quaternion lookRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
     }
 
     void TryAttack()
@@ -224,7 +130,6 @@ public class EnemyAI : MonoBehaviour
         float delayToHit = attackDelay / attackSpeed;
         float attackDuration = attackAnimationLength / attackSpeed;
 
-        // invoke calls methods after a delay, damage happens partway through animation
         Invoke(nameof(DealDamage), delayToHit);
         Invoke(nameof(ResetAttack), attackDuration);
     }
@@ -287,7 +192,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (actor != null)
         {
-            actor.OnDeath -= OnEnemyDeath;
+            actor.OnDeath -= OnBossDeath;
         }
     }
 }

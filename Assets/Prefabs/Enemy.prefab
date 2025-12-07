@@ -255,6 +255,9 @@ MonoBehaviour:
   attackDelay: 0.3
   hitEffect: {fileID: 3810448783153749638, guid: 0dcbd71311f14854ca210fe1012717f1, type: 3}
   rotationSpeed: 5
+  fleeHealthThreshold: 0.4
+  fleeDistance: 12
+  fleeSpeedMultiplier: 0.5
 --- !u!1 &1018568299069628848
 GameObject:
   m_ObjectHideFlags: 0

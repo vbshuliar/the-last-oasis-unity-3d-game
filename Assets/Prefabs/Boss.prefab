@@ -370,7 +370,7 @@ PrefabInstance:
       addedObject: {fileID: 4957878580709979581}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 48391b7e970b71445a096a9334e4c82a, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 9195305500978642395}
+      addedObject: {fileID: 9069546100396178764}
   m_SourcePrefab: {fileID: 100100000, guid: 48391b7e970b71445a096a9334e4c82a, type: 3}
 --- !u!1 &8685185441275664665 stripped
 GameObject:
@@ -456,7 +456,7 @@ MonoBehaviour:
   speedBoostDuration: 10
   damageBoostMultiplier: 2
   damageBoostDuration: 10
---- !u!114 &9195305500978642395
+--- !u!114 &9069546100396178764
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -465,13 +465,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8685185441275664665}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e4e4739421063f49a3a26e166675813, type: 3}
+  m_Script: {fileID: 11500000, guid: 8d21b42c2b5346c448e944fe8160b731, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  m_EditorClassIdentifier: Assembly-CSharp::BossAI
   detectionRange: 100
-  attackRange: 2
-  attackDamage: 2
-  attackSpeed: 0.5
+  attackRange: 1.5
+  attackDamage: 1
+  attackSpeed: 1
   attackDelay: 0.3
   hitEffect: {fileID: 3810448783153749638, guid: 0dcbd71311f14854ca210fe1012717f1, type: 3}
-  rotationSpeed: 6
+  rotationSpeed: 5
