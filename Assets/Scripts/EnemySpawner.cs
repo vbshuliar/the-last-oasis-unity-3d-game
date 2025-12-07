@@ -1,8 +1,12 @@
+using System;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
+    private static readonly Dictionary<string, GameObject> prefabLookup = new Dictionary<string, GameObject>(StringComparer.Ordinal);
+
     [Header("Spawn Settings")]
     [SerializeField] private GameObject[] enemyPrefabs;
     [SerializeField] private Transform[] spawnPoints;
@@ -22,6 +26,11 @@ public class EnemySpawner : MonoBehaviour
     private float spawnInterval;
     private int maxEnemiesOnScreen;
     private Difficulty? cachedDifficulty = null;
+
+    void Awake()
+    {
+        RegisterOwnPrefabs();
+    }
 
     void Start()
     {
@@ -211,6 +220,56 @@ public class EnemySpawner : MonoBehaviour
     Difficulty GetSavedDifficulty()
     {
         return (Difficulty)PlayerPrefs.GetInt("Difficulty", (int)Difficulty.Easy);
+    }
+
+    void RegisterOwnPrefabs()
+    {
+        RegisterPrefabs(enemyPrefabs);
+    }
+
+    static void RegisterPrefabs(GameObject[] prefabs)
+    {
+        if (prefabs == null)
+        {
+            return;
+        }
+
+        foreach (var prefab in prefabs)
+        {
+            if (prefab == null)
+            {
+                continue;
+            }
+
+            string key = prefab.name;
+            if (!prefabLookup.ContainsKey(key))
+            {
+                prefabLookup.Add(key, prefab);
+            }
+        }
+    }
+
+    public static void RefreshPrefabLookup()
+    {
+        EnemySpawner[] spawners = GameObject.FindObjectsOfType<EnemySpawner>();
+        foreach (var spawner in spawners)
+        {
+            if (spawner != null)
+            {
+                spawner.RegisterOwnPrefabs();
+            }
+        }
+    }
+
+    public static GameObject GetRegisteredPrefab(string prefabName)
+    {
+        if (string.IsNullOrEmpty(prefabName))
+        {
+            return null;
+        }
+
+        prefabLookup.TryGetValue(prefabName, out GameObject prefab);
+        return prefab;
     }
 }
 

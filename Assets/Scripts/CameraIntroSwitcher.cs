@@ -30,6 +30,13 @@ public class CameraIntroSwitcher : MonoBehaviour
 
     void Start()
     {
+        bool skipIntro = SaveSystem.Instance != null && SaveSystem.Instance.IsRestoringSave;
+        if (skipIntro)
+        {
+            ActivateGameplayCameraImmediate();
+            return;
+        }
+
         if (animatedCamera != null)
         {
             animatedCamera.enabled = true;
@@ -42,6 +49,22 @@ public class CameraIntroSwitcher : MonoBehaviour
 
         SetComponentsEnabled(false);
         SetPlayerControlsEnabled(false);
+    }
+
+    void ActivateGameplayCameraImmediate()
+    {
+        if (animatedCamera != null)
+        {
+            animatedCamera.enabled = false;
+        }
+
+        if (mainCamera != null)
+        {
+            mainCamera.enabled = true;
+        }
+
+        SetComponentsEnabled(true);
+        SetPlayerControlsEnabled(true);
     }
 
     /// <summary>
