@@ -14,7 +14,6 @@ public class PauseMenuController : MonoBehaviour
 
     [Header("Scene Names")]
     [SerializeField] private string mainMenuSceneName = "MainMenu";
-    [SerializeField] private GameObject optionsMenuPanel; // Reference to options menu if it exists
 
     private bool isPaused = false;
 
@@ -73,26 +72,20 @@ public class PauseMenuController : MonoBehaviour
 
     void Update()
     {
-        // don't handle esc if options menu is open (let optionsmenucontroller handle it)
-        if (optionsMenuPanel != null && optionsMenuPanel.activeSelf)
+        if (GameManager.Instance == null || Input.GetKeyDown(KeyCode.Escape) == false)
         {
             return;
         }
 
-        // Check for ESC key input
-        if (Input.GetKeyDown(KeyCode.Escape))
+        bool pauseMenuVisible = pauseMenuPanel != null && pauseMenuPanel.activeSelf;
+
+        if (pauseMenuVisible && GameManager.Instance.CurrentState == GameState.Paused)
         {
-            // If pause panel is visible, ESC should resume (same as clicking Resume button)
-            if (pauseMenuPanel != null && pauseMenuPanel.activeSelf)
-            {
-                ResumeGame(); // Call the exact same method as the Resume button
-                return;
-            }
-            // If game is playing, pause it
-            else if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Playing)
-            {
-                PauseGame();
-            }
+            ResumeGame();
+        }
+        else if (!pauseMenuVisible && GameManager.Instance.CurrentState == GameState.Playing)
+        {
+            PauseGame();
         }
     }
 

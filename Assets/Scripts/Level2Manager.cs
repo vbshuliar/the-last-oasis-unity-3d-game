@@ -57,13 +57,13 @@ public class Level2Manager : MonoBehaviour
         }
 
         float elapsedTime = Time.time - gameStartTime;
-        
+
         // Spawn enemies with increasing frequency
         UpdateEnemySpawning(elapsedTime);
-        
+
         // Spawn items every 20 seconds
         UpdateItemSpawning();
-        
+
         // Spawn boss at 4 minutes
         UpdateBossSpawning(elapsedTime);
 
@@ -75,8 +75,10 @@ public class Level2Manager : MonoBehaviour
     void UpdateEnemySpawning(float elapsedTime)
     {
         // Calculate current spawn interval (decreases over time = spawns more frequently)
-        // Linear interpolation from initial to minimum interval over game duration (5 minutes = 300 seconds)
-        float gameDuration = 300f; // 5 minutes
+        // Linear interpolation from initial to minimum interval over the global game duration
+        float gameDuration = (GameManager.Instance != null)
+            ? GameManager.Instance.GetGameDuration()
+            : 180f;
         float progress = Mathf.Clamp01(elapsedTime / gameDuration);
         float currentSpawnInterval = Mathf.Lerp(initialEnemySpawnInterval, minEnemySpawnInterval, progress);
 
@@ -112,7 +114,7 @@ public class Level2Manager : MonoBehaviour
 
         // Pick random enemy prefab
         GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
-        
+
         Vector3 spawnPosition;
         Quaternion spawnRotation = Quaternion.identity;
 
@@ -188,7 +190,7 @@ public class Level2Manager : MonoBehaviour
     {
         // Try to find a random position on the NavMesh
         Vector3 randomDirection = Random.insideUnitSphere * spawnRadius;
-        
+
         // Get player position as center point, or use origin
         Vector3 centerPoint = Vector3.zero;
         GameObject player = GameObject.FindGameObjectWithTag("Player");

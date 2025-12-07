@@ -84,6 +84,10 @@ public class PlayerController : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
+            if (actor != null)
+            {
+                GameManager.Instance.ApplyDifficultyToPlayer(actor, actor.maxHealth);
+            }
             GameManager.Instance.StartGame();
         }
     }
@@ -300,9 +304,9 @@ public class PlayerController : MonoBehaviour
     IEnumerator DamageBoostCoroutine(float damageMultiplier, float duration)
     {
         currentDamageMultiplier = damageMultiplier;
-        
+
         yield return new WaitForSeconds(duration);
-        
+
         currentDamageMultiplier = 1f;
         damageBoostCoroutine = null;
     }

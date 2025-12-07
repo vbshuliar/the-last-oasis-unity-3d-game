@@ -9,191 +9,200 @@ public class SceneTransitionManager : MonoBehaviour
 
     [Header("Transition Settings")]
     [SerializeField] private float fadeDuration = 1f;
+    [SerializeField] private Color fadeColor = Color.black;
     [SerializeField] private Image fadeImage;
 
-    private bool isTransitioning = false;
+    private bool isTransitioning;
+    private Coroutine transitionRoutine;
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            
-            // create fade image if not assigned
-            if (fadeImage == null)
-            {
-                CreateFadeImage();
-            }
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        if (fadeImage == null)
+        {
+            CreateFadeOverlay();
+        }
+        else
+        {
+            PrepareFadeImage(fadeImage);
+        }
     }
 
-    void CreateFadeImage()
+    void Start()
+    {
+        if (fadeImage == null)
+        {
+            return;
+        }
+
+        Color color = fadeImage.color;
+        color.a = 1f;
+        fadeImage.color = color;
+        StartCoroutine(FadeIn());
+    }
+
+    void CreateFadeOverlay()
     {
         GameObject canvasObj = new GameObject("TransitionCanvas");
+        canvasObj.transform.SetParent(transform, false);
+
         Canvas canvas = canvasObj.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        // always on top
-        canvas.sortingOrder = 9999;
-        canvasObj.AddComponent<CanvasScaler>();
+        canvas.sortingOrder = short.MaxValue;
+
+        CanvasScaler scaler = canvasObj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+
         canvasObj.AddComponent<GraphicRaycaster>();
 
         GameObject imageObj = new GameObject("FadeImage");
         imageObj.transform.SetParent(canvasObj.transform, false);
         fadeImage = imageObj.AddComponent<Image>();
-        fadeImage.color = new Color(0, 0, 0, 0);
-        
-        RectTransform rect = fadeImage.GetComponent<RectTransform>();
+
+        RectTransform rect = fadeImage.rectTransform;
         rect.anchorMin = Vector2.zero;
         rect.anchorMax = Vector2.one;
-        rect.sizeDelta = Vector2.zero;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+
+        PrepareFadeImage(fadeImage);
+    }
+
+    void PrepareFadeImage(Image targetImage)
+    {
+        if (targetImage == null)
+        {
+            return;
+        }
+
+        targetImage.color = new Color(fadeColor.r, fadeColor.g, fadeColor.b, 0f);
+        targetImage.raycastTarget = false; // enable only while fading
+
+        Transform root = targetImage.transform.root;
+        if (root != null)
+        {
+            DontDestroyOnLoad(root.gameObject);
+        }
     }
 
     public void LoadScene(string sceneName)
     {
-        if (!isTransitioning)
+        if (isTransitioning)
         {
-            StartCoroutine(TransitionCoroutine(sceneName));
+            return;
         }
+
+        transitionRoutine = StartCoroutine(TransitionRoutine(() => SceneManager.LoadSceneAsync(sceneName)));
     }
 
     public void LoadScene(int sceneIndex)
     {
-        if (!isTransitioning)
+        if (isTransitioning)
         {
-            StartCoroutine(TransitionCoroutine(sceneIndex));
+            return;
         }
+
+        transitionRoutine = StartCoroutine(TransitionRoutine(() => SceneManager.LoadSceneAsync(sceneIndex)));
     }
 
-    IEnumerator TransitionCoroutine(string sceneName)
+    IEnumerator TransitionRoutine(System.Func<AsyncOperation> operationFactory)
     {
         isTransitioning = true;
 
-        // fade out
-        yield return StartCoroutine(FadeOut());
-
-        // load scene
-        SceneManager.LoadScene(sceneName);
-
-        // fade in
-        yield return StartCoroutine(FadeIn());
+        yield return FadeOut();
+        yield return LoadSceneAsync(operationFactory);
+        yield return FadeIn();
 
         isTransitioning = false;
+        transitionRoutine = null;
     }
 
-    IEnumerator TransitionCoroutine(int sceneIndex)
+    IEnumerator LoadSceneAsync(System.Func<AsyncOperation> operationFactory)
     {
-        isTransitioning = true;
+        AsyncOperation asyncOperation = operationFactory?.Invoke();
 
-        // fade out
-        yield return StartCoroutine(FadeOut());
+        if (asyncOperation == null)
+        {
+            yield break;
+        }
 
-        // load scene
-        SceneManager.LoadScene(sceneIndex);
+        asyncOperation.allowSceneActivation = false;
 
-        // fade in
-        yield return StartCoroutine(FadeIn());
+        while (asyncOperation.progress < 0.9f)
+        {
+            yield return null;
+        }
 
-        isTransitioning = false;
+        asyncOperation.allowSceneActivation = true;
+
+        while (!asyncOperation.isDone)
+        {
+            yield return null;
+        }
     }
 
     IEnumerator FadeOut()
     {
-        if (fadeImage == null) yield break; // yield break exits coroutine early
-
-        float elapsed = 0f;
-        Color color = fadeImage.color;
-
-        // gradually increase alpha transparency from 0 to 1 over fadeDuration
-        while (elapsed < fadeDuration)
-        {
-            elapsed += Time.deltaTime;
-            // alpha goes from 0 to 1
-            color.a = Mathf.Clamp01(elapsed / fadeDuration);
-            fadeImage.color = color;
-            yield return null; // wait one frame before continuing
-        }
-
-        color.a = 1f;
-        fadeImage.color = color;
+        yield return Fade(0f, 1f, fadeDuration);
     }
 
     IEnumerator FadeIn()
     {
-        if (fadeImage == null) yield break;
+        yield return Fade(1f, 0f, fadeDuration);
+    }
+
+    IEnumerator Fade(float from, float to, float duration)
+    {
+        if (fadeImage == null)
+        {
+            yield break;
+        }
 
         float elapsed = 0f;
         Color color = fadeImage.color;
-        color.a = 1f;
+        fadeImage.raycastTarget = true;
 
-        // gradually decrease alpha from 1 to 0 over fadeDuration
-        while (elapsed < fadeDuration)
+        while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            // alpha goes from 1 to 0
-            color.a = 1f - Mathf.Clamp01(elapsed / fadeDuration);
+            float t = duration > 0f ? Mathf.Clamp01(elapsed / duration) : 1f;
+            color.a = Mathf.Lerp(from, to, t);
             fadeImage.color = color;
             yield return null;
         }
 
-        color.a = 0f;
+        color.a = to;
         fadeImage.color = color;
+        fadeImage.raycastTarget = to > 0f;
     }
 
     public void FadeOutOnly(float duration = -1f)
     {
-        if (duration < 0) duration = fadeDuration;
-        StartCoroutine(FadeOutCoroutine(duration));
+        if (fadeImage == null)
+        {
+            return;
+        }
+
+        StartCoroutine(Fade(0f, 1f, duration < 0f ? fadeDuration : duration));
     }
 
     public void FadeInOnly(float duration = -1f)
     {
-        if (duration < 0) duration = fadeDuration;
-        StartCoroutine(FadeInCoroutine(duration));
-    }
-
-    IEnumerator FadeOutCoroutine(float duration)
-    {
-        if (fadeImage == null) yield break;
-
-        float elapsed = 0f;
-        Color color = fadeImage.color;
-
-        while (elapsed < duration)
+        if (fadeImage == null)
         {
-            elapsed += Time.deltaTime;
-            color.a = Mathf.Clamp01(elapsed / duration);
-            fadeImage.color = color;
-            yield return null;
+            return;
         }
 
-        color.a = 1f;
-        fadeImage.color = color;
-    }
-
-    IEnumerator FadeInCoroutine(float duration)
-    {
-        if (fadeImage == null) yield break;
-
-        float elapsed = 0f;
-        Color color = fadeImage.color;
-        color.a = 1f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            color.a = 1f - Mathf.Clamp01(elapsed / duration);
-            fadeImage.color = color;
-            yield return null;
-        }
-
-        color.a = 0f;
-        fadeImage.color = color;
+        StartCoroutine(Fade(1f, 0f, duration < 0f ? fadeDuration : duration));
     }
 }
 

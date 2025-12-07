@@ -19,8 +19,12 @@ public class EndMenuController : MonoBehaviour
     [Header("Scene Names")]
     [SerializeField] private string mainMenuSceneName = "MainMenu";
 
+    private bool hasShownEndMenu = false;
+    private bool isSubscribedToGameManager = false;
+
     void Start()
     {
+        hasShownEndMenu = false;
         // Hide menu initially
         if (endMenuPanel != null)
         {
@@ -46,19 +50,27 @@ public class EndMenuController : MonoBehaviour
 
     void OnEnable()
     {
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.OnGameOver += ShowGameOverMenu;
-            GameManager.Instance.OnVictory += ShowVictoryMenu;
-        }
+        hasShownEndMenu = false;
+        TrySubscribeToGameManager();
     }
 
     void OnDisable()
     {
-        if (GameManager.Instance != null)
+        TryUnsubscribeFromGameManager();
+    }
+
+    void Update()
+    {
+        if (!isSubscribedToGameManager)
         {
-            GameManager.Instance.OnGameOver -= ShowGameOverMenu;
-            GameManager.Instance.OnVictory -= ShowVictoryMenu;
+            TrySubscribeToGameManager();
+        }
+
+        if (!hasShownEndMenu && GameManager.Instance != null &&
+            GameManager.Instance.CurrentState == GameState.Victory &&
+            GameManager.Instance.GetTimeRemaining() <= 0f)
+        {
+            ShowEndMenu(true);
         }
     }
 
@@ -74,6 +86,12 @@ public class EndMenuController : MonoBehaviour
 
     void ShowEndMenu(bool isVictory)
     {
+        if (hasShownEndMenu)
+        {
+            return;
+        }
+
+        hasShownEndMenu = true;
         if (endMenuPanel != null)
         {
             endMenuPanel.SetActive(true);
@@ -95,7 +113,7 @@ public class EndMenuController : MonoBehaviour
 
             if (timeText != null)
             {
-                float timeSurvived = 300f - GameManager.Instance.GetTimeRemaining();
+                float timeSurvived = 180f - GameManager.Instance.GetTimeRemaining();
                 int minutes = Mathf.FloorToInt(timeSurvived / 60);
                 int seconds = Mathf.FloorToInt(timeSurvived % 60);
                 timeText.text = "Time Survived: " + string.Format("{0:00}:{1:00}", minutes, seconds);
@@ -110,7 +128,7 @@ public class EndMenuController : MonoBehaviour
             {
                 int highScore = GameManager.Instance.GetHighScore();
                 highScoreText.text = "High Score: " + highScore.ToString();
-                
+
                 // show if new high score
                 if (GameManager.Instance.GetCurrentScore() >= highScore && highScore > 0)
                 {
@@ -136,7 +154,7 @@ public class EndMenuController : MonoBehaviour
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
-        
+
         if (SceneTransitionManager.Instance != null)
         {
             SceneTransitionManager.Instance.LoadScene(mainMenuSceneName);
@@ -149,15 +167,16 @@ public class EndMenuController : MonoBehaviour
 
     public void QuitGame()
     {
-        #if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-        #else
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
             Application.Quit();
-        #endif
+#endif
     }
 
     void OnDestroy()
     {
+        TryUnsubscribeFromGameManager();
         // Clean up button listeners
         if (restartButton != null)
         {
@@ -173,6 +192,30 @@ public class EndMenuController : MonoBehaviour
         {
             quitButton.onClick.RemoveAllListeners();
         }
+    }
+
+    void TrySubscribeToGameManager()
+    {
+        if (isSubscribedToGameManager || GameManager.Instance == null)
+        {
+            return;
+        }
+
+        GameManager.Instance.OnGameOver += ShowGameOverMenu;
+        GameManager.Instance.OnVictory += ShowVictoryMenu;
+        isSubscribedToGameManager = true;
+    }
+
+    void TryUnsubscribeFromGameManager()
+    {
+        if (!isSubscribedToGameManager || GameManager.Instance == null)
+        {
+            return;
+        }
+
+        GameManager.Instance.OnGameOver -= ShowGameOverMenu;
+        GameManager.Instance.OnVictory -= ShowVictoryMenu;
+        isSubscribedToGameManager = false;
     }
 }
 

@@ -7,21 +7,20 @@ public class EnemySpawner : MonoBehaviour
     [Header("Spawn Settings")]
     [SerializeField] private GameObject[] enemyPrefabs;
     [SerializeField] private Transform[] spawnPoints;
-    [SerializeField] private float spawnInterval = 2f;
-    [SerializeField] private int maxEnemiesOnScreen = 20;
-
-    [Header("Difficulty Settings")]
-    [SerializeField] private DifficultySettings easySettings;
-    [SerializeField] private DifficultySettings mediumSettings;
-    [SerializeField] private DifficultySettings hardSettings;
+    [SerializeField] private float fallbackSpawnInterval = 2f;
+    [SerializeField] private int fallbackMaxEnemiesOnScreen = 20;
 
     private List<GameObject> activeEnemies = new List<GameObject>();
     private float lastSpawnTime = 0f;
     private DifficultySettings currentDifficultySettings;
+    private float spawnInterval;
+    private int maxEnemiesOnScreen;
 
     void Start()
     {
-        UpdateDifficultySettings();
+        spawnInterval = fallbackSpawnInterval;
+        maxEnemiesOnScreen = fallbackMaxEnemiesOnScreen;
+        UpdateDifficultySettings(true);
         lastSpawnTime = Time.time;
     }
 
@@ -45,30 +44,36 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    void UpdateDifficultySettings()
+    void UpdateDifficultySettings(bool force = false)
     {
-        if (GameManager.Instance == null) return;
-
-        Difficulty currentDifficulty = GameManager.Instance.GetDifficulty();
-
-        switch (currentDifficulty)
+        if (GameManager.Instance == null)
         {
-            case Difficulty.Easy:
-                currentDifficultySettings = easySettings;
-                break;
-            case Difficulty.Medium:
-                currentDifficultySettings = mediumSettings;
-                break;
-            case Difficulty.Hard:
-                currentDifficultySettings = hardSettings;
-                break;
+            currentDifficultySettings = null;
+            spawnInterval = fallbackSpawnInterval;
+            maxEnemiesOnScreen = fallbackMaxEnemiesOnScreen;
+            return;
         }
 
-        if (currentDifficultySettings != null)
+        DifficultySettings newSettings = GameManager.Instance.GetCurrentDifficultySettings();
+
+        if (!force && newSettings == currentDifficultySettings)
         {
-            spawnInterval = 1f / currentDifficultySettings.enemySpawnRate;
-            maxEnemiesOnScreen = currentDifficultySettings.maxEnemiesOnScreen;
+            return;
         }
+
+        currentDifficultySettings = newSettings;
+
+        if (currentDifficultySettings == null)
+        {
+            spawnInterval = fallbackSpawnInterval;
+            maxEnemiesOnScreen = fallbackMaxEnemiesOnScreen;
+            return;
+        }
+
+        spawnInterval = currentDifficultySettings.enemySpawnRate > 0f
+            ? 1f / currentDifficultySettings.enemySpawnRate
+            : float.MaxValue;
+        maxEnemiesOnScreen = currentDifficultySettings.maxEnemiesOnScreen;
     }
 
     void SpawnEnemy()

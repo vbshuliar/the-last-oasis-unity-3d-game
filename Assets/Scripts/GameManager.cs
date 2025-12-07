@@ -24,14 +24,20 @@ public class GameManager : MonoBehaviour
     // singleton pattern only one gamemanager exists accessible from anywhere
     public static GameManager Instance { get; private set; }
 
+    private const float GameDurationSeconds = 180f;
+
     [Header("Game Settings")]
-    [SerializeField] float gameDuration = 300f;
     [SerializeField] Difficulty currentDifficulty = Difficulty.Easy;
 
     [Header("Scoring")]
     [SerializeField] int pointsPerKill = 10;
     [SerializeField] int pointsPerSecond = 1;
     [SerializeField] int pointsPerPickup = 5;
+
+    [Header("Difficulty Profiles")]
+    [SerializeField] DifficultySettings easyDifficultySettings;
+    [SerializeField] DifficultySettings mediumDifficultySettings;
+    [SerializeField] DifficultySettings hardDifficultySettings;
 
     public GameState CurrentState { get; private set; }
     private float timeRemaining;
@@ -49,8 +55,6 @@ public class GameManager : MonoBehaviour
     public event Action OnVictory;
     public event Action OnGamePaused;
     public event Action OnGameResumed;
-
-    private float[] difficultyMultipliers = { 1f, 2f, 3f };
 
     void Awake()
     {
@@ -74,22 +78,20 @@ public class GameManager : MonoBehaviour
         if (CurrentState == GameState.Playing && gameStarted)
         {
             UpdateTimer();
-            HandlePauseInput();
         }
-        // Don't handle ESC when paused - let PauseMenuController handle it
-        // This ensures ESC while paused always triggers Resume button functionality
     }
 
     void UpdateTimer()
     {
         // deltaTime is time since last frame, subtract it from remaining time
         timeRemaining -= Time.deltaTime;
+        timeRemaining = Mathf.Max(0f, timeRemaining); // never expose negative time
+
         // notify listeners that time updated (only if someone is listening)
         OnTimeUpdated?.Invoke(timeRemaining);
 
         if (timeRemaining <= 0)
         {
-            timeRemaining = 0;
             TriggerVictory();
         }
     }
@@ -111,12 +113,12 @@ public class GameManager : MonoBehaviour
     {
         CurrentState = GameState.Playing;
         gameStarted = true;
-        timeRemaining = gameDuration;
+        timeRemaining = GameDurationSeconds;
         currentScore = 0;
         enemiesKilled = 0;
         itemsCollected = 0;
         Time.timeScale = 1f;
-        
+
         OnScoreUpdated?.Invoke(currentScore);
         OnKillsUpdated?.Invoke(enemiesKilled);
         OnItemsCollectedUpdated?.Invoke(itemsCollected);
@@ -191,7 +193,7 @@ public class GameManager : MonoBehaviour
     public void AddScore(int points)
     {
         // multiply points by difficulty level (easy=1x, medium=2x, hard=3x)
-        float multiplier = difficultyMultipliers[(int)currentDifficulty];
+        float multiplier = GetCurrentScoreMultiplier();
         int finalPoints = Mathf.RoundToInt(points * multiplier);
         currentScore += finalPoints;
         OnScoreUpdated?.Invoke(currentScore);
@@ -230,7 +232,66 @@ public class GameManager : MonoBehaviour
 
     public float GetDifficultyMultiplier()
     {
-        return difficultyMultipliers[(int)currentDifficulty];
+        return GetCurrentScoreMultiplier();
+    }
+
+    public float GetGameDuration()
+    {
+        return GameDurationSeconds;
+    }
+
+    public float GetCurrentScoreMultiplier()
+    {
+        DifficultySettings settings = GetCurrentDifficultySettings();
+        if (settings == null || settings.scoreMultiplier <= 0f)
+        {
+            return 1f;
+        }
+
+        return settings.scoreMultiplier;
+    }
+
+    public DifficultySettings GetCurrentDifficultySettings()
+    {
+        return GetDifficultySettings(currentDifficulty);
+    }
+
+    public DifficultySettings GetDifficultySettings(Difficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case Difficulty.Easy:
+                return easyDifficultySettings;
+            case Difficulty.Medium:
+                return mediumDifficultySettings;
+            case Difficulty.Hard:
+                return hardDifficultySettings;
+            default:
+                return easyDifficultySettings;
+        }
+    }
+
+    public int GetPlayerMaxHealth(int baseMaxHealth)
+    {
+        DifficultySettings settings = GetCurrentDifficultySettings();
+        float multiplier = (settings != null && settings.playerHealthMultiplier > 0f)
+            ? settings.playerHealthMultiplier
+            : 1f;
+
+        int adjusted = Mathf.RoundToInt(baseMaxHealth * multiplier);
+        return Mathf.Max(1, adjusted);
+    }
+
+    public void ApplyDifficultyToPlayer(Actor playerActor, int baseMaxHealth)
+    {
+        if (playerActor == null)
+        {
+            return;
+        }
+
+        int adjustedHealth = GetPlayerMaxHealth(baseMaxHealth);
+        playerActor.SetMaxHealth(adjustedHealth);
+        playerActor.Heal(adjustedHealth);
     }
 
     void SaveSettings()
