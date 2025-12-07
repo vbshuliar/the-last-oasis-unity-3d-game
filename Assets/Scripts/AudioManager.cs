@@ -1,58 +1,36 @@
 using UnityEngine;
 
-// manages all game audio including music and sound effects
+// Minimal audio controller that only handles background music and three SFX (punch, coin, potion)
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
     [Header("Audio Sources")]
-    [SerializeField] private AudioSource musicSource;
-    [SerializeField] private AudioSource sfxSource;
+    [SerializeField] AudioSource musicSource;
+    [SerializeField] AudioSource sfxSource;
 
     [Header("Audio Clips")]
-    [SerializeField] private AudioClip backgroundMusic;
-    [SerializeField] private AudioClip playerAttackSound;
-    [SerializeField] private AudioClip enemyAttackSound;
-    [SerializeField] private AudioClip itemPickupSound;
-    [SerializeField] private AudioClip playerHurtSound;
-    [SerializeField] private AudioClip enemyDeathSound;
-    [SerializeField] private AudioClip footstepSound;
+    [SerializeField] AudioClip backgroundMusic;
+    [SerializeField] AudioClip punchClip;
+    [SerializeField] AudioClip coinClip;
+    [SerializeField] AudioClip potionClip;
 
-    [Header("Volume Settings")]
-    [SerializeField] private float musicVolume = 0.7f;
-    [SerializeField] private float sfxVolume = 0.8f;
+    [Header("Volumes")]
+    [Range(0f, 1f)][SerializeField] float musicVolume = 0.7f;
+    [Range(0f, 1f)][SerializeField] float sfxVolume = 0.9f;
 
     void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-
-            if (musicSource == null)
-            {
-                GameObject musicObj = new GameObject("MusicSource");
-                musicObj.transform.SetParent(transform);
-                musicSource = musicObj.AddComponent<AudioSource>();
-                musicSource.loop = true;
-                musicSource.playOnAwake = false;
-            }
-
-            if (sfxSource == null)
-            {
-                GameObject sfxObj = new GameObject("SFXSource");
-                sfxObj.transform.SetParent(transform);
-                sfxSource = sfxObj.AddComponent<AudioSource>();
-                sfxSource.playOnAwake = false;
-            }
-
-            LoadVolumeSettings();
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        EnsureAudioSources();
+        ApplyVolumes();
     }
 
     void Start()
@@ -60,36 +38,36 @@ public class AudioManager : MonoBehaviour
         PlayBackgroundMusic();
     }
 
-    void LoadVolumeSettings()
+    void EnsureAudioSources()
     {
-        musicVolume = PlayerPrefs.GetFloat("MusicVolume", 0.7f);
-        sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 0.8f);
+        if (musicSource == null)
+        {
+            musicSource = CreateChildSource("MusicSource", true);
+        }
 
+        if (sfxSource == null)
+        {
+            sfxSource = CreateChildSource("SFXSource", false);
+        }
+    }
+
+    AudioSource CreateChildSource(string name, bool loop)
+    {
+        GameObject child = new GameObject(name);
+        child.transform.SetParent(transform);
+        AudioSource source = child.AddComponent<AudioSource>();
+        source.playOnAwake = false;
+        source.loop = loop;
+        return source;
+    }
+
+    void ApplyVolumes()
+    {
         if (musicSource != null)
         {
             musicSource.volume = musicVolume;
         }
 
-        if (sfxSource != null)
-        {
-            sfxSource.volume = sfxVolume;
-        }
-    }
-
-    public void SetMusicVolume(float volume)
-    {
-        // keep volume between 0 and 1
-        musicVolume = Mathf.Clamp01(volume);
-        if (musicSource != null)
-        {
-            musicSource.volume = musicVolume;
-        }
-    }
-
-    public void SetSFXVolume(float volume)
-    {
-        // keep volume between 0 and 1
-        sfxVolume = Mathf.Clamp01(volume);
         if (sfxSource != null)
         {
             sfxSource.volume = sfxVolume;
@@ -98,59 +76,87 @@ public class AudioManager : MonoBehaviour
 
     public void PlayBackgroundMusic()
     {
-        if (musicSource != null && backgroundMusic != null)
+        if (musicSource == null || backgroundMusic == null)
         {
-            musicSource.clip = backgroundMusic;
+            return;
+        }
+
+        musicSource.clip = backgroundMusic;
+        if (!musicSource.isPlaying)
+        {
             musicSource.Play();
         }
     }
 
-    public void PlaySound(AudioClip clip, Vector3 position, bool is3D = false)
+    public void SetMusicVolume(float normalizedVolume)
     {
-        if (clip == null) return;
-
-        if (is3D)
+        musicVolume = Mathf.Clamp01(normalizedVolume);
+        if (musicSource != null)
         {
-            // 3d sound gets quieter as you move away from position
-            AudioSource.PlayClipAtPoint(clip, position, sfxVolume);
-        }
-        else
-        {
-            // 2d sound plays at same volume regardless of position
-            if (sfxSource != null)
-            {
-                sfxSource.PlayOneShot(clip, sfxVolume);
-            }
+            musicSource.volume = musicVolume;
         }
     }
-    public void PlayPlayerAttackSound(Vector3 position)
+
+    public void SetSFXVolume(float normalizedVolume)
     {
-        PlaySound(playerAttackSound, position, true);
+        sfxVolume = Mathf.Clamp01(normalizedVolume);
+        if (sfxSource != null)
+        {
+            sfxSource.volume = sfxVolume;
+        }
     }
 
-    public void PlayEnemyAttackSound(Vector3 position)
+    public void PlayPunchSound(Vector3 position)
     {
-        PlaySound(enemyAttackSound, position, true);
+        PlaySpatialClip(punchClip, position);
     }
 
-    public void PlayItemPickupSound()
+    public void PlayCoinPickupSound()
     {
-        PlaySound(itemPickupSound, Vector3.zero, false);
+        PlayUISfx(coinClip);
     }
 
-    public void PlayPlayerHurtSound()
+    public void PlayPotionPickupSound()
     {
-        PlaySound(playerHurtSound, Vector3.zero, false);
+        PlayUISfx(potionClip);
     }
 
-    public void PlayEnemyDeathSound(Vector3 position)
+    public void PlayPickupSoundForItem(ItemType itemType)
     {
-        PlaySound(enemyDeathSound, position, true);
+        switch (itemType)
+        {
+            case ItemType.Star:
+                PlayCoinPickupSound();
+                break;
+            case ItemType.SpeedBoost:
+            case ItemType.DamageBoost:
+            case ItemType.HealthPack:
+                PlayPotionPickupSound();
+                break;
+            default:
+                PlayPotionPickupSound();
+                break;
+        }
     }
 
-    public void PlayFootstepSound(Vector3 position)
+    void PlaySpatialClip(AudioClip clip, Vector3 position)
     {
-        PlaySound(footstepSound, position, true);
+        if (clip == null)
+        {
+            return;
+        }
+
+        AudioSource.PlayClipAtPoint(clip, position, sfxVolume);
+    }
+
+    void PlayUISfx(AudioClip clip)
+    {
+        if (clip == null || sfxSource == null)
+        {
+            return;
+        }
+
+        sfxSource.PlayOneShot(clip, sfxVolume);
     }
 }
 

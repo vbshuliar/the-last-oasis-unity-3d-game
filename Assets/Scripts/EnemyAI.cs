@@ -246,6 +246,11 @@ public class EnemyAI : MonoBehaviour
                 {
                     Instantiate(hitEffect, player.position + new Vector3(0, 1, 0), Quaternion.identity);
                 }
+
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayPunchSound(player.position);
+                }
             }
         }
     }

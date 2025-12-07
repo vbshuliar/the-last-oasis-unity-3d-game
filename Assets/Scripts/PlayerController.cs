@@ -251,6 +251,10 @@ public class PlayerController : MonoBehaviour
         { target = null; return; }
 
         Instantiate(hitEffect, target.transform.position + new Vector3(0, 1, 0), Quaternion.identity);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayPunchSound(target.transform.position);
+        }
         int finalDamage = Mathf.RoundToInt(attackDamage * currentDamageMultiplier);
         target.GetComponent<Actor>().TakeDamage(finalDamage);
     }

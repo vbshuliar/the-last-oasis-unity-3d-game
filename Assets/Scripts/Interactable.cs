@@ -96,6 +96,11 @@ public class Interactable : MonoBehaviour
                 }
                 break;
         }
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlayPickupSoundForItem(itemType);
+        }
     }
 
     void ApplyHealthPack(PlayerController player)

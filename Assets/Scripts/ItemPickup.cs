@@ -77,7 +77,7 @@ public class ItemPickup : MonoBehaviour
 
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayItemPickupSound();
+            AudioManager.Instance.PlayPickupSoundForItem(itemType);
         }
 
         Destroy(gameObject);
