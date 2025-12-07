@@ -84,22 +84,9 @@ public class OptionsMenuController : MonoBehaviour
         // load difficulty from playerprefs (with fallback to gamemanager if available)
         if (difficultyDropdown != null)
         {
-            int savedDifficulty = 0;
-            
-            // try to load from playerprefs first
-            if (PlayerPrefs.HasKey("Difficulty"))
-            {
-                savedDifficulty = PlayerPrefs.GetInt("Difficulty");
-            }
-            // fallback to gamemanager if playerprefs doesn't have it
-            else if (GameManager.Instance != null)
-            {
-                savedDifficulty = (int)GameManager.Instance.GetDifficulty();
-            }
-            
+            int savedDifficulty = PlayerPrefs.GetInt("Difficulty", (int)Difficulty.Easy);
             difficultyDropdown.value = savedDifficulty;
-            
-            // update gamemanager if it exists to keep them in sync
+
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.SetDifficulty((Difficulty)savedDifficulty);
@@ -134,12 +121,10 @@ public class OptionsMenuController : MonoBehaviour
     void OnDifficultyChanged(int value)
     {
         Difficulty difficulty = (Difficulty)value;
-        
-        // save directly to playerprefs to ensure persistence
+
         PlayerPrefs.SetInt("Difficulty", (int)difficulty);
         PlayerPrefs.Save();
-        
-        // update gamemanager if it exists to keep them in sync
+
         if (GameManager.Instance != null)
         {
             GameManager.Instance.SetDifficulty(difficulty);
@@ -151,7 +136,7 @@ public class OptionsMenuController : MonoBehaviour
         if (optionsMenuPanel != null)
         {
             optionsMenuPanel.SetActive(false);
-            
+
             // if game was paused when options opened, resume it
             if (wasGamePaused && GameManager.Instance != null)
             {

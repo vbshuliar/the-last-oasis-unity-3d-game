@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,14 +6,22 @@ public class EnemySpawner : MonoBehaviour
     [Header("Spawn Settings")]
     [SerializeField] private GameObject[] enemyPrefabs;
     [SerializeField] private Transform[] spawnPoints;
-    [SerializeField] private float fallbackSpawnInterval = 2f;
-    [SerializeField] private int fallbackMaxEnemiesOnScreen = 20;
+    [SerializeField] private float fallbackSpawnInterval = 10f;
+    [SerializeField] private int fallbackMaxEnemiesOnScreen = 10;
+
+    [Header("Random Spawn Area")]
+    [SerializeField] private bool useRandomSpawnPositions = true;
+    [SerializeField] private Transform spawnCenter;
+    [SerializeField] private float minSpawnDistance = 35f;
+    [SerializeField] private float maxSpawnDistance = 45f;
+    [SerializeField] private int maxPositionAttempts = 10;
 
     private List<GameObject> activeEnemies = new List<GameObject>();
     private float lastSpawnTime = 0f;
     private DifficultySettings currentDifficultySettings;
     private float spawnInterval;
     private int maxEnemiesOnScreen;
+    private Difficulty? cachedDifficulty = null;
 
     void Start()
     {
@@ -51,42 +58,78 @@ public class EnemySpawner : MonoBehaviour
             currentDifficultySettings = null;
             spawnInterval = fallbackSpawnInterval;
             maxEnemiesOnScreen = fallbackMaxEnemiesOnScreen;
+            cachedDifficulty = null;
             return;
         }
 
-        DifficultySettings newSettings = GameManager.Instance.GetCurrentDifficultySettings();
+        Difficulty selectedDifficulty = GetSavedDifficulty();
+        bool difficultyChanged = !cachedDifficulty.HasValue || cachedDifficulty.Value != selectedDifficulty;
 
-        if (!force && newSettings == currentDifficultySettings)
+        DifficultySettings newSettings = GameManager.Instance.GetDifficultySettings(selectedDifficulty);
+
+        if (!force && !difficultyChanged && newSettings == currentDifficultySettings)
         {
             return;
         }
 
+        cachedDifficulty = selectedDifficulty;
         currentDifficultySettings = newSettings;
 
         if (currentDifficultySettings == null)
         {
-            spawnInterval = fallbackSpawnInterval;
+            spawnInterval = GetIntervalForDifficulty(selectedDifficulty);
             maxEnemiesOnScreen = fallbackMaxEnemiesOnScreen;
             return;
         }
 
-        spawnInterval = currentDifficultySettings.enemySpawnRate > 0f
-            ? 1f / currentDifficultySettings.enemySpawnRate
-            : float.MaxValue;
+        spawnInterval = GetIntervalForDifficulty(selectedDifficulty);
         maxEnemiesOnScreen = currentDifficultySettings.maxEnemiesOnScreen;
+    }
+
+    float GetIntervalForDifficulty(Difficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case Difficulty.Easy:
+                return 10f;
+            case Difficulty.Medium:
+                return 7f;
+            case Difficulty.Hard:
+                return 5f;
+            default:
+                return fallbackSpawnInterval;
+        }
     }
 
     void SpawnEnemy()
     {
         if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;
-        if (spawnPoints == null || spawnPoints.Length == 0) return;
 
-        // pick random enemy prefab and spawn point
         GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
-        Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+        Vector3 spawnPosition;
+        Quaternion spawnRotation = Quaternion.identity;
 
-        // instantiate creates a copy of the prefab at the spawn point
-        GameObject enemy = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+        if (!useRandomSpawnPositions && spawnPoints != null && spawnPoints.Length > 0)
+        {
+            Transform spawnPoint = spawnPoints[Random.Range(0, spawnPoints.Length)];
+            if (spawnPoint == null)
+            {
+                return;
+            }
+
+            spawnPosition = spawnPoint.position;
+            spawnRotation = spawnPoint.rotation;
+        }
+        else
+        {
+            if (!TryGetRandomSpawnPosition(out spawnPosition))
+            {
+                Debug.LogWarning("EnemySpawner: Failed to find a valid spawn position.");
+                return;
+            }
+        }
+
+        GameObject enemy = Instantiate(enemyPrefab, spawnPosition, spawnRotation);
         activeEnemies.Add(enemy);
 
         // apply difficulty settings to enemy
@@ -136,17 +179,38 @@ public class EnemySpawner : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
+        Gizmos.color = Color.red;
+
+        if (spawnCenter != null)
+        {
+            Gizmos.DrawWireSphere(spawnCenter.position, minSpawnDistance);
+            Gizmos.DrawWireSphere(spawnCenter.position, maxSpawnDistance);
+        }
+
         if (spawnPoints != null)
         {
-            Gizmos.color = Color.red;
             foreach (Transform spawnPoint in spawnPoints)
             {
                 if (spawnPoint != null)
                 {
-                    Gizmos.DrawWireSphere(spawnPoint.position, 1f);
+                    Gizmos.DrawWireCube(spawnPoint.position, Vector3.one);
                 }
             }
         }
+    }
+
+    bool TryGetRandomSpawnPosition(out Vector3 position)
+    {
+        float minDistance = Mathf.Max(0f, minSpawnDistance);
+        float maxDistance = Mathf.Max(minDistance + 1f, maxSpawnDistance);
+        Vector3 center = spawnCenter != null ? spawnCenter.position : Vector3.zero;
+
+        return SpawnPositionUtility.TryGetPosition(center, minDistance, maxDistance, out position, maxPositionAttempts);
+    }
+
+    Difficulty GetSavedDifficulty()
+    {
+        return (Difficulty)PlayerPrefs.GetInt("Difficulty", (int)Difficulty.Easy);
     }
 }
 

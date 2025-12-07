@@ -10,10 +10,9 @@ public class GameData
     public int playerHealth;
     public int currentScore;
     public float timeRemaining;
-    public int difficulty;
-    public string sceneName;
     public int enemiesKilled;
     public int itemsCollected;
+    public string sceneName;
 }
 
 // handles saving and loading game state to from a file
@@ -73,7 +72,6 @@ public class SaveSystem : MonoBehaviour
 
         data.currentScore = GameManager.Instance.GetCurrentScore();
         data.timeRemaining = GameManager.Instance.GetTimeRemaining();
-        data.difficulty = (int)GameManager.Instance.GetDifficulty();
         data.enemiesKilled = GameManager.Instance.GetEnemiesKilled();
         data.itemsCollected = GameManager.Instance.GetItemsCollected();
         data.sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
@@ -146,7 +144,7 @@ public class SaveSystem : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.SetDifficulty((Difficulty)data.difficulty);
+            // Difficulty is restored via PlayerPrefs; no additional action required.
         }
     }
 
