@@ -64,14 +64,6 @@ public class Interactable : MonoBehaviour
     {
         switch (itemType)
         {
-            case ItemType.GreenPotion:
-                if (GameManager.Instance != null)
-                {
-                    GameManager.Instance.AddItemCollected();
-                }
-                player.ApplyGreenPotionEffect(sizeMultiplier, speedMultiplier, duration);
-                break;
-
             case ItemType.HealthPack:
                 if (GameManager.Instance != null)
                 {
