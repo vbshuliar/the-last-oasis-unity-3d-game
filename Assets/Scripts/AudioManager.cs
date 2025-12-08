@@ -17,8 +17,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioClip buttonClip;
 
     [Header("Volumes")]
-    [Range(0f, 1f)][SerializeField] float musicVolume = 0.7f;
-    [Range(0f, 1f)][SerializeField] float sfxVolume = 0.9f;
+    [Range(0f, 1f)][SerializeField] float musicVolume = 0.2f;
+    [Range(0f, 1f)][SerializeField] float sfxVolume = 1.0f;
 
     void Awake()
     {

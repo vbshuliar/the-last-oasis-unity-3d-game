@@ -108,9 +108,12 @@ public class Interactable : MonoBehaviour
         Actor playerActor = player.GetComponent<Actor>();
         if (playerActor != null)
         {
-            // Restore 20% of maximum health
-            int healAmount = Mathf.RoundToInt(playerActor.maxHealth * 0.2f);
-            playerActor.Heal(healAmount);
+            int targetHealth = playerActor.maxHealth;
+            int amountToHeal = targetHealth - playerActor.currentHealth;
+            if (amountToHeal > 0)
+            {
+                playerActor.Heal(amountToHeal);
+            }
         }
     }
 

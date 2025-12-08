@@ -13,7 +13,7 @@ public class ItemPickup : MonoBehaviour
     [SerializeField] string playerTag = "Player";
 
     [Header("Health Pack Settings")]
-    [SerializeField] int healAmount = 3;
+    [SerializeField] int healAmount = 15;
 
     [Header("Speed Boost Settings")]
     [SerializeField] float speedBoostMultiplier = 1.5f;
@@ -123,9 +123,13 @@ public class ItemPickup : MonoBehaviour
         Actor playerActor = player.GetComponent<Actor>();
         if (playerActor != null)
         {
-            // Restore 20% of maximum health
-            int healAmount = Mathf.RoundToInt(playerActor.maxHealth * 0.2f);
-            playerActor.Heal(healAmount);
+            // Restore full health up to configured cap (default 15)
+            int targetHealth = healAmount > 0 ? healAmount : playerActor.maxHealth;
+            int amountToHeal = targetHealth - playerActor.currentHealth;
+            if (amountToHeal > 0)
+            {
+                playerActor.Heal(amountToHeal);
+            }
         }
     }
 

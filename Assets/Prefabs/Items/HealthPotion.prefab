@@ -139,9 +139,9 @@ GameObject:
   - component: {fileID: 5397853358831665215}
   - component: {fileID: 4123082388872084514}
   - component: {fileID: 8228177770583225367}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: HealthPotion
-  m_TagString: Interactable
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -181,7 +181,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 1
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &4123082388872084514
 MonoBehaviour:
@@ -190,20 +190,20 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6628531709409835253}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: acea6c1a5b56eb04787b2306aab1cccc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable
   interactionType: 1
-  itemType: 1
-  sizeMultiplier: 2
-  speedMultiplier: 2
-  duration: 5
-  speedBoostMultiplier: 2
-  speedBoostDuration: 10
-  damageBoostMultiplier: 2
-  damageBoostDuration: 10
+  itemType: 0
+  sizeMultiplier: 1
+  speedMultiplier: 1
+  duration: 0
+  speedBoostMultiplier: 1
+  speedBoostDuration: 0
+  damageBoostMultiplier: 1
+  damageBoostDuration: 0
 --- !u!114 &8228177770583225367
 MonoBehaviour:
   m_ObjectHideFlags: 0
