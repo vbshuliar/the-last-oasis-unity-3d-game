@@ -379,7 +379,7 @@ GameObject:
   - component: {fileID: 47650603}
   - component: {fileID: 47650602}
   - component: {fileID: 47650604}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2614,7 +2614,7 @@ GameObject:
   - component: {fileID: 417051841}
   - component: {fileID: 417051840}
   - component: {fileID: 417051842}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.009
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3346,7 +3346,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 72
   m_UseGeometry: 0
   m_DefaultArea: 0
   m_GenerateLinks: 0
@@ -3946,7 +3946,7 @@ GameObject:
   - component: {fileID: 767192183}
   - component: {fileID: 767192182}
   - component: {fileID: 767192184}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4058,7 +4058,7 @@ GameObject:
   - component: {fileID: 812678622}
   - component: {fileID: 812678621}
   - component: {fileID: 812678623}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.006
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4170,7 +4170,7 @@ GameObject:
   - component: {fileID: 830093948}
   - component: {fileID: 830093947}
   - component: {fileID: 830093949}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4757,7 +4757,7 @@ GameObject:
   - component: {fileID: 898640048}
   - component: {fileID: 898640047}
   - component: {fileID: 898640049}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5149,7 +5149,7 @@ GameObject:
   - component: {fileID: 1014775377}
   - component: {fileID: 1014775376}
   - component: {fileID: 1014775378}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5747,7 +5747,7 @@ GameObject:
   - component: {fileID: 1101711998}
   - component: {fileID: 1101711997}
   - component: {fileID: 1101711999}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6194,7 +6194,7 @@ GameObject:
   - component: {fileID: 1174658328}
   - component: {fileID: 1174658327}
   - component: {fileID: 1174658329}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.011
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7621,7 +7621,7 @@ GameObject:
   - component: {fileID: 1831055490}
   - component: {fileID: 1831055489}
   - component: {fileID: 1831055491}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7919,7 +7919,7 @@ GameObject:
   - component: {fileID: 1976258866}
   - component: {fileID: 1976258865}
   - component: {fileID: 1976258867}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Palm.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
