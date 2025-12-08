@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Random = UnityEngine.Random;
 using UnityEngine;
 
+// controls enemy instantiation frequency and difficulty driven stats
 public class EnemySpawner : MonoBehaviour
 {
     private static readonly Dictionary<string, GameObject> prefabLookup = new Dictionary<string, GameObject>(StringComparer.Ordinal);
@@ -27,11 +28,13 @@ public class EnemySpawner : MonoBehaviour
     private int maxEnemiesOnScreen;
     private Difficulty? cachedDifficulty = null;
 
+    // keeps local references of supplied prefabs for lookup
     void Awake()
     {
         RegisterOwnPrefabs();
     }
 
+    // seeds timing values and reads the active difficulty
     void Start()
     {
         spawnInterval = fallbackSpawnInterval;
@@ -40,6 +43,7 @@ public class EnemySpawner : MonoBehaviour
         lastSpawnTime = Time.time;
     }
 
+    // handles timed spawning and removes destroyed enemies from tracking
     void Update()
     {
         if (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.Playing)
@@ -60,6 +64,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    // refreshes spawn pacing and counts based on difficulty
     void UpdateDifficultySettings(bool force = false)
     {
         if (GameManager.Instance == null)
@@ -95,6 +100,7 @@ public class EnemySpawner : MonoBehaviour
         maxEnemiesOnScreen = currentDifficultySettings.maxEnemiesOnScreen;
     }
 
+    // maps difficulty to the desired spawn interval
     float GetIntervalForDifficulty(Difficulty difficulty)
     {
         switch (difficulty)
@@ -110,6 +116,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    // chooses a spawn location and instantiates a random enemy
     void SpawnEnemy()
     {
         if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;
@@ -148,6 +155,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    // updates spawned enemy stats based on difficulty settings
     void ApplyDifficultyToEnemy(GameObject enemy)
     {
         if (currentDifficultySettings == null) return;
@@ -174,6 +182,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    // destroys every tracked enemy instance immediately
     public void ClearAllEnemies()
     {
         foreach (GameObject enemy in activeEnemies)
@@ -186,6 +195,7 @@ public class EnemySpawner : MonoBehaviour
         activeEnemies.Clear();
     }
 
+    // draws spawn ranges and point markers inside the editor
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
@@ -208,6 +218,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    // locates a navmesh position within the configured ring
     bool TryGetRandomSpawnPosition(out Vector3 position)
     {
         float minDistance = Mathf.Max(0f, minSpawnDistance);
@@ -217,16 +228,19 @@ public class EnemySpawner : MonoBehaviour
         return SpawnPositionUtility.TryGetPosition(center, minDistance, maxDistance, out position, maxPositionAttempts);
     }
 
+    // reads the saved difficulty from player prefs
     Difficulty GetSavedDifficulty()
     {
         return (Difficulty)PlayerPrefs.GetInt("Difficulty", (int)Difficulty.Easy);
     }
 
+    // ensures this spawner's prefabs are available in the lookup
     void RegisterOwnPrefabs()
     {
         RegisterPrefabs(enemyPrefabs);
     }
 
+    // adds provided prefabs to the shared dictionary
     static void RegisterPrefabs(GameObject[] prefabs)
     {
         if (prefabs == null)
@@ -249,6 +263,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    // asks all spawners to repopulate the lookup dictionary
     public static void RefreshPrefabLookup()
     {
         EnemySpawner[] spawners = GameObject.FindObjectsOfType<EnemySpawner>();
@@ -261,6 +276,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
+    // returns a prefab reference if it was previously registered
     public static GameObject GetRegisteredPrefab(string prefabName)
     {
         if (string.IsNullOrEmpty(prefabName))

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+// provides fade in and fade out transitions when loading scenes
 public class SceneTransitionManager : MonoBehaviour
 {
     public static SceneTransitionManager Instance { get; private set; }
@@ -15,6 +16,7 @@ public class SceneTransitionManager : MonoBehaviour
     private bool isTransitioning;
     private Coroutine transitionRoutine;
 
+    // builds the singleton instance and ensures a fade image exists
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -36,6 +38,7 @@ public class SceneTransitionManager : MonoBehaviour
         }
     }
 
+    // begins with a fade in so the screen starts visible
     void Start()
     {
         if (fadeImage == null)
@@ -49,6 +52,7 @@ public class SceneTransitionManager : MonoBehaviour
         StartCoroutine(FadeIn());
     }
 
+    // creates a fullscreen ui image to drive the fade effect
     void CreateFadeOverlay()
     {
         GameObject canvasObj = new GameObject("TransitionCanvas");
@@ -77,6 +81,7 @@ public class SceneTransitionManager : MonoBehaviour
         PrepareFadeImage(fadeImage);
     }
 
+    // configures the fade image color and persistence
     void PrepareFadeImage(Image targetImage)
     {
         if (targetImage == null)
@@ -94,6 +99,7 @@ public class SceneTransitionManager : MonoBehaviour
         }
     }
 
+    // fades out, loads by name, then fades in again
     public void LoadScene(string sceneName)
     {
         if (isTransitioning)
@@ -104,6 +110,7 @@ public class SceneTransitionManager : MonoBehaviour
         transitionRoutine = StartCoroutine(TransitionRoutine(() => SceneManager.LoadSceneAsync(sceneName)));
     }
 
+    // fades out, loads by build index, then fades in again
     public void LoadScene(int sceneIndex)
     {
         if (isTransitioning)
@@ -114,6 +121,7 @@ public class SceneTransitionManager : MonoBehaviour
         transitionRoutine = StartCoroutine(TransitionRoutine(() => SceneManager.LoadSceneAsync(sceneIndex)));
     }
 
+    // runs the fade out, load, and fade in sequence
     IEnumerator TransitionRoutine(System.Func<AsyncOperation> operationFactory)
     {
         isTransitioning = true;
@@ -126,6 +134,7 @@ public class SceneTransitionManager : MonoBehaviour
         transitionRoutine = null;
     }
 
+    // loads scenes asynchronously and waits for completion
     IEnumerator LoadSceneAsync(System.Func<AsyncOperation> operationFactory)
     {
         AsyncOperation asyncOperation = operationFactory?.Invoke();
@@ -150,16 +159,19 @@ public class SceneTransitionManager : MonoBehaviour
         }
     }
 
+    // helper that fades alpha from transparent to opaque
     IEnumerator FadeOut()
     {
         yield return Fade(0f, 1f, fadeDuration);
     }
 
+    // helper that fades alpha from opaque to transparent
     IEnumerator FadeIn()
     {
         yield return Fade(1f, 0f, fadeDuration);
     }
 
+    // interpolates the fade image alpha over time
     IEnumerator Fade(float from, float to, float duration)
     {
         if (fadeImage == null)
@@ -185,6 +197,7 @@ public class SceneTransitionManager : MonoBehaviour
         fadeImage.raycastTarget = to > 0f;
     }
 
+    // triggers only a fade out without loading a scene
     public void FadeOutOnly(float duration = -1f)
     {
         if (fadeImage == null)
@@ -195,6 +208,7 @@ public class SceneTransitionManager : MonoBehaviour
         StartCoroutine(Fade(0f, 1f, duration < 0f ? fadeDuration : duration));
     }
 
+    // triggers only a fade in without loading a scene
     public void FadeInOnly(float duration = -1f)
     {
         if (fadeImage == null)

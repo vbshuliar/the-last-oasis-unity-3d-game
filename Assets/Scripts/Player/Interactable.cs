@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum InteractableType { Enemy, Item }
 
+// allows enemies or pickups to expose interaction logic to the player
 public class Interactable : MonoBehaviour
 {
     public Actor myActor { get; private set; }
@@ -29,8 +30,9 @@ public class Interactable : MonoBehaviour
     [ConditionalHide("interactionType")]
     [SerializeField] private float damageBoostDuration = 10f;
 
-    private ItemPickup itemPickupComponent; // For backward compatibility
+    private ItemPickup itemPickupComponent; // for backward compatibility
 
+    // caches actor references and optional legacy pickup scripts
     void Awake()
     {
         if (interactionType == InteractableType.Enemy)
@@ -38,13 +40,14 @@ public class Interactable : MonoBehaviour
             myActor = GetComponent<Actor>();
         }
 
-        // Check if ItemPickup component exists for backward compatibility
+        // check if itempickup component exists for backward compatibility
         itemPickupComponent = GetComponent<ItemPickup>();
     }
 
+    // triggers item or legacy pickup logic when the player interacts
     public void InteractWithItem(PlayerController player)
     {
-        // If ItemPickup component exists, use it (backward compatibility)
+        // if itempickup component exists, use it (backward compatibility)
         if (itemPickupComponent != null)
         {
             itemPickupComponent.ApplyEffect(player);
@@ -52,7 +55,7 @@ public class Interactable : MonoBehaviour
             return;
         }
 
-        // Otherwise, handle item effects directly based on itemType
+        // otherwise, handle item effects directly based on itemtype
         if (interactionType == InteractableType.Item)
         {
             ApplyItemEffect(player);
@@ -60,6 +63,7 @@ public class Interactable : MonoBehaviour
         }
     }
 
+    // applies the configured power up effect and updates stats
     void ApplyItemEffect(PlayerController player)
     {
         switch (itemType)
@@ -89,7 +93,7 @@ public class Interactable : MonoBehaviour
                 break;
 
             case ItemType.Star:
-                // Star only gives +50 score, doesn't count as regular item collected
+                // star only gives +50 score, doesn't count as regular item collected
                 if (GameManager.Instance != null)
                 {
                     GameManager.Instance.AddScore(50);
@@ -103,6 +107,7 @@ public class Interactable : MonoBehaviour
         }
     }
 
+    // heals the player actor up to their max health
     void ApplyHealthPack(PlayerController player)
     {
         Actor playerActor = player.GetComponent<Actor>();
@@ -117,9 +122,9 @@ public class Interactable : MonoBehaviour
         }
     }
 
-    // Validate that item settings only show when interaction type is Item
+    // validate that item settings only show when interaction type is item
     void OnValidate()
     {
-        // This ensures the inspector updates when interactionType changes
+        // this ensures the inspector updates when interactiontype changes
     }
 }

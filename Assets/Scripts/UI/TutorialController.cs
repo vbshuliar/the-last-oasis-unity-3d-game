@@ -15,9 +15,10 @@ public class TutorialController : MonoBehaviour
     [SerializeField] private string level2SceneName = "Level2";
     [SerializeField] private string mainMenuSceneName = "MainMenu";
 
+    // wires button click handlers and resets time scale
     void Start()
     {
-        // setup button listeners
+        // set up button listeners
         SetupButton(startLevel1Button, OnStartLevel1Clicked, "Start Level 1");
         SetupButton(startLevel2Button, OnStartLevel2Clicked, "Start Level 2");
         SetupButton(mainMenuButton, OnMainMenuClicked, "Main Menu");
@@ -25,6 +26,7 @@ public class TutorialController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    // makes sure each provided button is ready to use and registers events
     void SetupButton(Button button, UnityEngine.Events.UnityAction action, string buttonName)
     {
         if (button == null)
@@ -48,6 +50,7 @@ public class TutorialController : MonoBehaviour
         button.onClick.AddListener(PlayButtonSound);
     }
 
+    // plays a ui click sound when tutorial buttons are pressed
     void PlayButtonSound()
     {
         if (AudioManager.Instance != null)
@@ -56,6 +59,7 @@ public class TutorialController : MonoBehaviour
         }
     }
 
+    // loads level one
     public void OnStartLevel1Clicked()
     {
         Debug.Log("TutorialController: OnStartLevel1Clicked called!");
@@ -69,6 +73,7 @@ public class TutorialController : MonoBehaviour
         }
     }
 
+    // loads level two
     public void OnStartLevel2Clicked()
     {
         Debug.Log("TutorialController: OnStartLevel2Clicked called!");
@@ -82,6 +87,7 @@ public class TutorialController : MonoBehaviour
         }
     }
 
+    // returns to the main menu scene
     public void OnMainMenuClicked()
     {
         Debug.Log("TutorialController: OnMainMenuClicked called!");
@@ -95,6 +101,7 @@ public class TutorialController : MonoBehaviour
         }
     }
 
+    // removes listeners when the tutorial controller is destroyed
     void OnDestroy()
     {
         // clean up button listeners

@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// predicts the target path and steers toward the intercept point
 public class PursuitBehaviour : SteeringBehaviour
 {
     [Header("Pursuit Settings")]
@@ -9,6 +10,7 @@ public class PursuitBehaviour : SteeringBehaviour
     private Rigidbody rb;
     private Rigidbody targetRb;
 
+    // acquires rigidbody references for both pursuer and target
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -24,13 +26,14 @@ public class PursuitBehaviour : SteeringBehaviour
         }
     }
 
+    // returns the pursuit steering force aimed at predicted future position
     public override Vector3 CalculateForce()
     {
         if (target == null) return Vector3.zero;
 
-        // Predict target's future position
+        // predict target's future position
         Vector3 predictedPosition = target.position;
-        
+
         if (targetRb != null)
         {
             predictedPosition = target.position + targetRb.linearVelocity * predictionTime;
@@ -39,12 +42,13 @@ public class PursuitBehaviour : SteeringBehaviour
         Vector3 desiredVelocity = (predictedPosition - transform.position).normalized * maxSpeed;
         Vector3 steering = desiredVelocity - (rb != null ? rb.linearVelocity : Vector3.zero);
 
-        // Limit steering force
+        // limit steering force
         steering = Vector3.ClampMagnitude(steering, maxForce);
 
         return steering * weight;
     }
 
+    // sets the pursuit target and caches its rigidbody
     public void SetTarget(Transform newTarget)
     {
         target = newTarget;
@@ -54,6 +58,7 @@ public class PursuitBehaviour : SteeringBehaviour
         }
     }
 
+    // returns the currently tracked target transform
     public Transform GetTarget()
     {
         return target;

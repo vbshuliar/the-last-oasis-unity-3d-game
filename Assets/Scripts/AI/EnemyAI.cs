@@ -34,6 +34,7 @@ public class EnemyAI : MonoBehaviour
     float lastAttackTime = 0f;
     float baseAgentSpeed = 0f;
 
+    // grabs navmesh, animator, and actor references
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -41,6 +42,7 @@ public class EnemyAI : MonoBehaviour
         actor = GetComponent<Actor>();
     }
 
+    // locates the player and configures attack timing and events
     void Start()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -80,6 +82,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    // awards a kill to the game manager when this enemy dies
     void OnEnemyDeath(Actor deadActor)
     {
         if (GameManager.Instance != null)
@@ -88,6 +91,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    // handles fleeing logic, pursuit, attacks, and animation states
     void Update()
     {
         if (player == null || actor == null || !actor.IsAlive()) return;
@@ -124,6 +128,7 @@ public class EnemyAI : MonoBehaviour
         SetAnimations();
     }
 
+    // determines if the enemy should switch into flee behaviour
     bool ShouldFlee()
     {
         if (actor == null || actor.maxHealth <= 0)
@@ -135,6 +140,7 @@ public class EnemyAI : MonoBehaviour
         return healthPercent <= fleeHealthThreshold;
     }
 
+    // drives the flee movement and facing logic
     void HandleFleeing()
     {
         EnterFleeState();
@@ -164,6 +170,7 @@ public class EnemyAI : MonoBehaviour
         isAttacking = false;
     }
 
+    // lowers speed and marks the enemy as currently fleeing
     void EnterFleeState()
     {
         if (agent == null)
@@ -176,6 +183,7 @@ public class EnemyAI : MonoBehaviour
         agent.speed = targetSpeed;
     }
 
+    // restores normal speed once the flee state ends
     void ExitFleeState()
     {
         isFleeing = false;
@@ -185,6 +193,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    // creates a direction vector and hands off to face logic
     void FacePlayer()
     {
         Vector3 direction = (player.position - transform.position).normalized;
@@ -194,6 +203,7 @@ public class EnemyAI : MonoBehaviour
         FaceDirection(direction);
     }
 
+    // smoothly rotates the enemy to look along the supplied vector
     void FaceDirection(Vector3 direction)
     {
         if (direction == Vector3.zero)
@@ -205,6 +215,7 @@ public class EnemyAI : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed);
     }
 
+    // triggers an attack when cooldown permits
     void TryAttack()
     {
         if (isAttacking) return;
@@ -229,6 +240,7 @@ public class EnemyAI : MonoBehaviour
         Invoke(nameof(ResetAttack), attackDuration);
     }
 
+    // damages the player and plays feedback effects
     void DealDamage()
     {
         if (player == null) return;
@@ -255,6 +267,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    // clears attack state and returns animator speed to normal
     void ResetAttack()
     {
         isAttacking = false;
@@ -264,6 +277,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    // selects idle or walk loops unless mid attack
     void SetAnimations()
     {
         if (animator == null) return;
@@ -279,6 +293,7 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    // visualizes detection and attack radii inside the editor
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
@@ -288,6 +303,7 @@ public class EnemyAI : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 
+    // unsubscribes from the death callback when destroyed
     void OnDestroy()
     {
         if (actor != null)

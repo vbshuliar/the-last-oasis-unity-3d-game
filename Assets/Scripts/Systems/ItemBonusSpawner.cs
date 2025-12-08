@@ -1,10 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Periodically spawns random item pickups at predefined spawn points.
-/// Intended to be paired with the Bonus Item Spawner tool.
-/// </summary>
+// periodically spawns random item pickups at predefined points
 public class ItemBonusSpawner : MonoBehaviour
 {
     [Header("Spawn Configuration")]
@@ -17,16 +14,19 @@ public class ItemBonusSpawner : MonoBehaviour
     private readonly List<GameObject> activeBonuses = new List<GameObject>();
     private float nextSpawnTime;
 
+    // gathers child spawn points if none were assigned
     void Awake()
     {
         CacheChildSpawnPointsIfNeeded();
     }
 
+    // schedules the first spawn when enabled
     void OnEnable()
     {
         ScheduleNextSpawn(spawnImmediately ? 0f : spawnIntervalSeconds);
     }
 
+    // checks whether it is time to spawn another bonus
     void Update()
     {
         if (Time.time >= nextSpawnTime)
@@ -35,6 +35,7 @@ public class ItemBonusSpawner : MonoBehaviour
         }
     }
 
+    // enforces limits and instantiates a random bonus prefab
     void TrySpawnBonus()
     {
         CleanupActiveBonuses();
@@ -66,16 +67,19 @@ public class ItemBonusSpawner : MonoBehaviour
         ScheduleNextSpawn(spawnIntervalSeconds);
     }
 
+    // removes destroyed bonuses from the tracking list
     void CleanupActiveBonuses()
     {
         activeBonuses.RemoveAll(bonus => bonus == null);
     }
 
+    // verifies that at least one prefab is available
     bool HasValidPrefabs()
     {
         return bonusPrefabs != null && bonusPrefabs.Length > 0;
     }
 
+    // ensures there are spawn points, attempting to cache children if needed
     bool HasSpawnPoints()
     {
         if (spawnPoints != null && spawnPoints.Length > 0)
@@ -87,11 +91,13 @@ public class ItemBonusSpawner : MonoBehaviour
         return spawnPoints != null && spawnPoints.Length > 0;
     }
 
+    // sets the timestamp for the next spawn attempt
     void ScheduleNextSpawn(float delay)
     {
         nextSpawnTime = Time.time + Mathf.Max(0f, delay);
     }
 
+    // uses child transforms as spawn points if none were manually provided
     void CacheChildSpawnPointsIfNeeded()
     {
         if (spawnPoints != null && spawnPoints.Length > 0)
@@ -114,6 +120,7 @@ public class ItemBonusSpawner : MonoBehaviour
         }
     }
 
+    // draws helper gizmos showing where bonuses can appear
     void OnDrawGizmosSelected()
     {
         if (spawnPoints == null)

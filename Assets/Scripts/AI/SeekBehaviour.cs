@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// steers directly toward the assigned target transform
 public class SeekBehaviour : SteeringBehaviour
 {
     [Header("Seek Settings")]
@@ -8,6 +9,7 @@ public class SeekBehaviour : SteeringBehaviour
 
     private Rigidbody rb;
 
+    // ensures a rigidbody exists so velocity can be sampled
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -18,6 +20,7 @@ public class SeekBehaviour : SteeringBehaviour
         }
     }
 
+    // produces the seek steering force toward the target
     public override Vector3 CalculateForce()
     {
         if (target == null) return Vector3.zero;
@@ -25,17 +28,19 @@ public class SeekBehaviour : SteeringBehaviour
         Vector3 desiredVelocity = (target.position - transform.position).normalized * maxSpeed;
         Vector3 steering = desiredVelocity - (rb != null ? rb.linearVelocity : Vector3.zero);
 
-        // Limit steering force
+        // limit steering force
         steering = Vector3.ClampMagnitude(steering, maxForce);
 
         return steering * weight;
     }
 
+    // updates the target transform to chase
     public void SetTarget(Transform newTarget)
     {
         target = newTarget;
     }
 
+    // exposes the current target transform
     public Transform GetTarget()
     {
         return target;

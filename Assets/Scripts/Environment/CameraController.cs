@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// smoothly follows the target using an offset
 public class CameraController : MonoBehaviour
 {
     public Transform target;
@@ -7,6 +8,7 @@ public class CameraController : MonoBehaviour
     public float smoothSpeed = 8f;
     public Vector3 offset;
 
+    // lerps the camera toward the desired offset position each frame
     void Update()
     {
         if (target == null) return;

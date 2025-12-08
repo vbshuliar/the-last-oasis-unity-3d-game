@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
+// manages difficulty and audio settings within the options menu
 public class OptionsMenuController : MonoBehaviour
 {
     [Header("UI Elements")]
@@ -18,11 +19,12 @@ public class OptionsMenuController : MonoBehaviour
 
     private bool wasGamePaused = false;
 
+    // loads previously saved settings and wires up callbacks
     void Start()
     {
         LoadSettings();
 
-        // Setup listeners
+        // set up listeners
         if (musicVolumeSlider != null)
         {
             musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
@@ -45,9 +47,10 @@ public class OptionsMenuController : MonoBehaviour
         }
     }
 
+    // lets the escape key close the menu quickly
     void Update()
     {
-        // Handle Esc key to close options menu
+        // handle esc key to close options menu
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (optionsMenuPanel != null && optionsMenuPanel.activeSelf)
@@ -57,15 +60,17 @@ public class OptionsMenuController : MonoBehaviour
         }
     }
 
+    // tracks whether the game was paused before opening the menu
     void OnEnable()
     {
-        // Check if game was paused when options opened
+        // check if game was paused when options opened
         if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Paused)
         {
             wasGamePaused = true;
         }
     }
 
+    // populates the ui controls with saved values
     void LoadSettings()
     {
         // load music volume
@@ -82,7 +87,7 @@ public class OptionsMenuController : MonoBehaviour
             sfxVolumeSlider.value = sfxVolume;
         }
 
-        // load difficulty from playerprefs (with fallback to gamemanager if available)
+        // load difficulty from player prefs (with fallback to gamemanager if available)
         if (difficultyDropdown != null)
         {
             int savedDifficulty = PlayerPrefs.GetInt("Difficulty", (int)Difficulty.Easy);
@@ -95,6 +100,7 @@ public class OptionsMenuController : MonoBehaviour
         }
     }
 
+    // saves and applies the new music volume
     void OnMusicVolumeChanged(float value)
     {
         PlayerPrefs.SetFloat("MusicVolume", value);
@@ -107,6 +113,7 @@ public class OptionsMenuController : MonoBehaviour
         }
     }
 
+    // saves and applies the new sfx volume
     void OnSFXVolumeChanged(float value)
     {
         PlayerPrefs.SetFloat("SFXVolume", value);
@@ -119,6 +126,7 @@ public class OptionsMenuController : MonoBehaviour
         }
     }
 
+    // persists the selected difficulty and informs the game manager
     void OnDifficultyChanged(int value)
     {
         Difficulty difficulty = (Difficulty)value;
@@ -132,6 +140,7 @@ public class OptionsMenuController : MonoBehaviour
         }
     }
 
+    // hides the options panel and resumes the game if needed
     public void OnBackClicked()
     {
         if (optionsMenuPanel != null)
@@ -154,6 +163,7 @@ public class OptionsMenuController : MonoBehaviour
         }
     }
 
+    // plays a button click through the audio manager
     void PlayButtonSound()
     {
         if (AudioManager.Instance != null)
@@ -162,9 +172,10 @@ public class OptionsMenuController : MonoBehaviour
         }
     }
 
+    // removes listeners when the options menu is destroyed
     void OnDestroy()
     {
-        // Clean up listeners
+        // clean up listeners
         if (musicVolumeSlider != null)
         {
             musicVolumeSlider.onValueChanged.RemoveAllListeners();

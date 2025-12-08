@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "GameSettings", menuName = "Game/Game Settings")]
+// stores global scoring values and difficulty presets for designers
 public class GameSettings : ScriptableObject
 {
     [Header("Game Duration")]

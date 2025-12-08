@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Benjathemaker
 {
+    // simple utility behaviour for rotating, floating, and scaling gems
     public class SimpleGemsAnim : MonoBehaviour
     {
         public bool isRotating = false;
@@ -26,6 +27,7 @@ namespace Benjathemaker
         public float scaleLerpSpeed = 1f;
         private float scaleTimer;
 
+        // captures initial transforms so animations can loop cleanly
         void Start()
         {
             initialScale = transform.localScale;
@@ -35,6 +37,7 @@ namespace Benjathemaker
             endScale = initialScale * (endScale.magnitude / startScale.magnitude);
         }
 
+        // drives rotation, floating, and scaling oscillations each frame
         void Update()
         {
             if (isRotating)
@@ -59,7 +62,7 @@ namespace Benjathemaker
             if (isScaling)
             {
                 scaleTimer += Time.deltaTime * scaleLerpSpeed;
-                float t = Mathf.PingPong(scaleTimer, 1f); // Oscillates between 0 and 1
+                float t = Mathf.PingPong(scaleTimer, 1f); // oscillates between 0 and 1
 
                 if (useEasingForScaling)
                 {
@@ -70,6 +73,7 @@ namespace Benjathemaker
             }
         }
 
+        // helper easing curve for smoother float or scale transitions
         float EaseInOutQuad(float t)
         {
             return t < 0.5f ? 2 * t * t : 1 - Mathf.Pow(-2 * t + 2, 2) / 2;

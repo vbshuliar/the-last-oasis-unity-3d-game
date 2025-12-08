@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
+// handles showing the victory or game over menu and related actions
 public class EndMenuController : MonoBehaviour
 {
     [Header("UI Elements")]
@@ -22,16 +23,17 @@ public class EndMenuController : MonoBehaviour
     private bool hasShownEndMenu = false;
     private bool isSubscribedToGameManager = false;
 
+    // hides the menu and wires up button callbacks
     void Start()
     {
         hasShownEndMenu = false;
-        // Hide menu initially
+        // hide menu initially
         if (endMenuPanel != null)
         {
             endMenuPanel.SetActive(false);
         }
 
-        // Setup button listeners
+        // set up button listeners
         if (restartButton != null)
         {
             restartButton.onClick.AddListener(RestartGame);
@@ -48,17 +50,20 @@ public class EndMenuController : MonoBehaviour
         }
     }
 
+    // subscribes to game manager events when enabled
     void OnEnable()
     {
         hasShownEndMenu = false;
         TrySubscribeToGameManager();
     }
 
+    // unsubscribes when disabled to avoid leaks
     void OnDisable()
     {
         TryUnsubscribeFromGameManager();
     }
 
+    // listens for victory state to automatically show the menu
     void Update()
     {
         if (!isSubscribedToGameManager)
@@ -74,16 +79,19 @@ public class EndMenuController : MonoBehaviour
         }
     }
 
+    // configures the menu for defeat
     void ShowGameOverMenu()
     {
         ShowEndMenu(false);
     }
 
+    // configures the menu for victory
     void ShowVictoryMenu()
     {
         ShowEndMenu(true);
     }
 
+    // updates title and stats before displaying the panel
     void ShowEndMenu(bool isVictory)
     {
         if (hasShownEndMenu)
@@ -97,7 +105,7 @@ public class EndMenuController : MonoBehaviour
             endMenuPanel.SetActive(true);
         }
 
-        // Update title
+        // update title
         if (titleText != null)
         {
             titleText.text = isVictory ? "VICTORY!" : "GAME OVER";
@@ -138,6 +146,7 @@ public class EndMenuController : MonoBehaviour
         }
     }
 
+    // restarts the active scene and hides the menu
     public void RestartGame()
     {
         Time.timeScale = 1f;
@@ -151,6 +160,7 @@ public class EndMenuController : MonoBehaviour
         }
     }
 
+    // loads the configured main menu scene
     public void GoToMainMenu()
     {
         Time.timeScale = 1f;
@@ -165,6 +175,7 @@ public class EndMenuController : MonoBehaviour
         }
     }
 
+    // exits the application or stops play mode in the editor
     public void QuitGame()
     {
 #if UNITY_EDITOR
@@ -174,10 +185,11 @@ public class EndMenuController : MonoBehaviour
 #endif
     }
 
+    // removes listeners when the object is destroyed
     void OnDestroy()
     {
         TryUnsubscribeFromGameManager();
-        // Clean up button listeners
+        // clean up button listeners
         if (restartButton != null)
         {
             restartButton.onClick.RemoveAllListeners();
@@ -194,6 +206,7 @@ public class EndMenuController : MonoBehaviour
         }
     }
 
+    // attaches to game manager events exactly once
     void TrySubscribeToGameManager()
     {
         if (isSubscribedToGameManager || GameManager.Instance == null)
@@ -206,6 +219,7 @@ public class EndMenuController : MonoBehaviour
         isSubscribedToGameManager = true;
     }
 
+    // detaches from game manager events safely
     void TryUnsubscribeFromGameManager()
     {
         if (!isSubscribedToGameManager || GameManager.Instance == null)

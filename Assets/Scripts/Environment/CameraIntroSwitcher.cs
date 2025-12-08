@@ -1,12 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
-/// Enables an animated camera for the opening fly-through, then switches to the gameplay camera
-/// once the animation finishes.
-/// Call <see cref="EndIntro"/> via an Animation Event, Timeline signal, or script when the
-/// intro sequence has reached the gameplay framing.
-/// </summary>
+// handles switching from the intro camera to the gameplay camera when ready
 public class CameraIntroSwitcher : MonoBehaviour
 {
     [Header("Camera References")]
@@ -23,11 +18,13 @@ public class CameraIntroSwitcher : MonoBehaviour
     PlayerController cachedPlayerController;
     NavMeshAgent cachedPlayerAgent;
 
+    // caches player references needed for disabling controls
     void Awake()
     {
         CachePlayerReferences();
     }
 
+    // shows the intro camera unless the save system requires skipping
     void Start()
     {
         bool skipIntro = SaveSystem.Instance != null && SaveSystem.Instance.IsRestoringSave;
@@ -51,6 +48,7 @@ public class CameraIntroSwitcher : MonoBehaviour
         SetPlayerControlsEnabled(false);
     }
 
+    // activates the gameplay camera without waiting for animation events
     void ActivateGameplayCameraImmediate()
     {
         if (animatedCamera != null)
@@ -67,9 +65,7 @@ public class CameraIntroSwitcher : MonoBehaviour
         SetPlayerControlsEnabled(true);
     }
 
-    /// <summary>
-    /// Call when the intro camera animation finishes to switch rendering back to the gameplay camera.
-    /// </summary>
+    // call when the intro animation has completed to switch cameras
     public void EndIntro()
     {
         if (animatedCamera != null)
@@ -86,6 +82,7 @@ public class CameraIntroSwitcher : MonoBehaviour
         SetPlayerControlsEnabled(true);
     }
 
+    // toggles optional behaviours alongside the camera switch
     void SetComponentsEnabled(bool enabled)
     {
         if (componentsToEnable == null)
@@ -104,6 +101,7 @@ public class CameraIntroSwitcher : MonoBehaviour
         }
     }
 
+    // finds the player controller and its navmesh agent once
     void CachePlayerReferences()
     {
         if (cachedPlayerController != null)
@@ -121,6 +119,7 @@ public class CameraIntroSwitcher : MonoBehaviour
         }
     }
 
+    // enables or disables the player controller during the intro
     void SetPlayerControlsEnabled(bool enable)
     {
         if (!disablePlayerControlsDuringIntro)

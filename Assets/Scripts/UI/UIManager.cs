@@ -17,10 +17,11 @@ public class UIManager : MonoBehaviour
 
     private GameManager gameManager;
 
+    // locates managers, subscribes to events, and primes the hud
     void Start()
     {
         gameManager = GameManager.Instance;
-        
+
         // subscribe to events - when gamemanager fires these events our methods get called
         if (gameManager != null)
         {
@@ -37,9 +38,10 @@ public class UIManager : MonoBehaviour
         UpdateItems(0);
     }
 
+    // finds the player actor and hooks into its health events
     void FindAndSubscribeToPlayer()
     {
-        // Try to find player if not assigned
+        // try to find player if not assigned
         if (playerActor == null)
         {
             GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -70,11 +72,12 @@ public class UIManager : MonoBehaviour
     }
 
     private float lastHealthCheckTime = 0f;
-    private const float HEALTH_CHECK_INTERVAL = 0.1f; // Check every 0.1 seconds as fallback
+    private const float HEALTH_CHECK_INTERVAL = 0.1f; // check every 0.1 seconds as fallback
 
+    // keeps ui data in sync each frame and polls health if needed
     void Update()
     {
-        // Try to find player if still not found (in case player spawns after UI)
+        // try to find player if still not found (in case player spawns after ui)
         if (playerActor == null)
         {
             FindAndSubscribeToPlayer();
@@ -97,6 +100,7 @@ public class UIManager : MonoBehaviour
     private int lastHealth = -1;
     private int lastMaxHealth = -1;
 
+    // updates the fill amount of the health bar image
     void UpdateHealthBar(int currentHealth, int maxHealth)
     {
         if (healthBar == null)
@@ -116,7 +120,7 @@ public class UIManager : MonoBehaviour
         // clamp to ensure it's always between 0 and 1
         float fillAmount = Mathf.Clamp01((float)currentHealth / (float)maxHealth);
         healthBar.fillAmount = fillAmount;
-        
+
         // only log when health actually changes (to reduce console spam)
         if (currentHealth != lastHealth || maxHealth != lastMaxHealth)
         {
@@ -126,6 +130,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // writes the timer text in mm:ss format
     void UpdateTimer(float timeRemaining)
     {
         if (timerText != null)
@@ -137,6 +142,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // refreshes the score label
     void UpdateScore(int score)
     {
         if (scoreText != null)
@@ -145,6 +151,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // refreshes the kills label
     void UpdateKills(int kills)
     {
         if (killsText != null)
@@ -153,6 +160,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // refreshes the items collected label
     void UpdateItems(int items)
     {
         if (itemsText != null)
@@ -161,9 +169,10 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // reattaches health listeners if the ui is re-enabled
     void OnEnable()
     {
-        // Re-subscribe if GameObject is re-enabled
+        // re-subscribe if gameobject is re-enabled
         if (playerActor != null)
         {
             playerActor.OnHealthChanged += UpdateHealthBar;
@@ -171,15 +180,17 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    // detaches health listeners while disabled
     void OnDisable()
     {
-        // Unsubscribe when disabled
+        // unsubscribe when disabled
         if (playerActor != null)
         {
             playerActor.OnHealthChanged -= UpdateHealthBar;
         }
     }
 
+    // removes all event subscriptions when destroyed
     void OnDestroy()
     {
         // unsubscribe from events to prevent memory leaks

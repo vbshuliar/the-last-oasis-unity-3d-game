@@ -55,6 +55,7 @@ public class SaveSystem : MonoBehaviour
 
     public bool IsRestoringSave => isRestoringSave;
 
+    // establishes the singleton instance and determines save file path
     void Awake()
     {
         if (instance == null)
@@ -69,6 +70,7 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
+    // writes the current game state to disk as json
     public void SaveGame()
     {
         if (GameManager.Instance == null)
@@ -112,6 +114,7 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
+    // loads game state from disk and begins restoring it
     public bool LoadGame()
     {
         if (!File.Exists(saveFilePath))
@@ -149,7 +152,7 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
-    // coroutine waits for scene to load before restoring player state
+    // waits for the scene to load before restoring actors
     IEnumerator RestoreGameState(GameData data)
     {
         yield return WaitForSceneToLoad(data.sceneName);
@@ -165,6 +168,7 @@ public class SaveSystem : MonoBehaviour
         isRestoringSave = false;
     }
 
+    // repeatedly checks if the requested scene has finished loading
     IEnumerator WaitForSceneToLoad(string sceneName)
     {
         const float maxSceneWait = 10f;
@@ -176,6 +180,7 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
+    // restores the player position rotation and health
     IEnumerator RestorePlayerState(GameData data)
     {
         GameObject player = null;
@@ -226,6 +231,7 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
+    // recreates or reuses enemies using serialized state data
     IEnumerator RestoreEnemyStates(EnemyStateData[] enemyStates)
     {
         if (enemyStates == null || enemyStates.Length == 0)
@@ -267,6 +273,7 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
+    // gathers any currently spawned enemies so they can be reused
     List<GameObject> CollectExistingEnemies()
     {
         EnemyAI[] existing = GameObject.FindObjectsOfType<EnemyAI>();
@@ -281,6 +288,7 @@ public class SaveSystem : MonoBehaviour
         return list;
     }
 
+    // tries to instantiate an enemy prefab that matches the saved data
     GameObject InstantiateEnemyFromState(EnemyStateData state)
     {
         if (state == null)
@@ -297,6 +305,7 @@ public class SaveSystem : MonoBehaviour
         return Instantiate(prefab, state.position, state.rotation);
     }
 
+    // falls back to reusing an already spawned enemy when prefab lookup fails
     GameObject ReuseExistingEnemy(List<GameObject> pool, string prefabName)
     {
         if (pool == null || pool.Count == 0)
@@ -327,6 +336,7 @@ public class SaveSystem : MonoBehaviour
         return fallback;
     }
 
+    // sets enemy health values according to the saved state
     void ApplyEnemyHealth(GameObject enemyInstance, EnemyStateData state)
     {
         if (enemyInstance == null || state == null)
@@ -351,6 +361,7 @@ public class SaveSystem : MonoBehaviour
         enemyActor.SetCurrentHealth(Mathf.Clamp(healthToSet, 0, enemyActor.maxHealth));
     }
 
+    // positions the enemy on the navmesh and restores its rotation
     void ApplyEnemyTransform(GameObject enemyInstance, EnemyStateData state)
     {
         if (enemyInstance == null || state == null)
@@ -371,11 +382,13 @@ public class SaveSystem : MonoBehaviour
         enemyInstance.transform.rotation = state.rotation;
     }
 
+    // reports whether a save file currently exists
     public bool HasSaveFile()
     {
         return File.Exists(saveFilePath);
     }
 
+    // deletes the existing save file, if one is present
     public void DeleteSaveFile()
     {
         if (File.Exists(saveFilePath))
@@ -385,6 +398,7 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
+    // serializes all active enemies into lightweight state data
     EnemyStateData[] CaptureEnemyStates()
     {
         EnemyAI[] enemies = GameObject.FindObjectsOfType<EnemyAI>();
@@ -417,6 +431,7 @@ public class SaveSystem : MonoBehaviour
         return stateList.ToArray();
     }
 
+    // derives the prefab name from a spawned enemy instance
     string GetPrefabIdentifier(GameObject source)
     {
         if (source == null)

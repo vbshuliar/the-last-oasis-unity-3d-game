@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// represents a hierarchical state that can own substates
 public class HFSMState
 {
     protected GameObject gameObject;
@@ -10,6 +11,7 @@ public class HFSMState
     protected List<HFSMState> subStates = new List<HFSMState>();
     protected HFSMState currentSubState;
 
+    // stores references and optional parent pointers
     public HFSMState(GameObject gameObject, HFSM fsm, HFSMState parentState = null)
     {
         this.gameObject = gameObject;
@@ -18,9 +20,9 @@ public class HFSMState
         this.parentState = parentState;
     }
 
-    public virtual void Enter() 
+    // activates this state and ensures first substate runs
+    public virtual void Enter()
     {
-        // Enter first sub-state if available
         if (subStates.Count > 0 && currentSubState == null)
         {
             currentSubState = subStates[0];
@@ -28,18 +30,18 @@ public class HFSMState
         }
     }
 
-    public virtual void Update() 
+    // updates the active substate if one exists
+    public virtual void Update()
     {
-        // Update current sub-state
         if (currentSubState != null)
         {
             currentSubState.Update();
         }
     }
 
-    public virtual void Exit() 
+    // exits the current substate before leaving
+    public virtual void Exit()
     {
-        // Exit current sub-state
         if (currentSubState != null)
         {
             currentSubState.Exit();
@@ -47,11 +49,13 @@ public class HFSMState
         }
     }
 
+    // registers a child state for this state
     public void AddSubState(HFSMState subState)
     {
         subStates.Add(subState);
     }
 
+    // hands control to another substate
     public void ChangeSubState(HFSMState newSubState)
     {
         if (currentSubState != null)
@@ -67,11 +71,13 @@ public class HFSMState
         }
     }
 
+    // returns reference to current substate
     public HFSMState GetCurrentSubState()
     {
         return currentSubState;
     }
 
+    // retrieves a substate by index if available
     public HFSMState GetSubState(int index)
     {
         if (index >= 0 && index < subStates.Count)
@@ -81,6 +87,7 @@ public class HFSMState
         return null;
     }
 
+    // reports how many substates belong to this state
     public int GetSubStateCount()
     {
         return subStates.Count;

@@ -1,11 +1,10 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-/// <summary>
-/// Helper methods for picking NavMesh positions a minimum distance away from a center point.
-/// </summary>
+// helper methods for picking navmesh positions a minimum distance away from a center point
 public static class SpawnPositionUtility
 {
+    // tries to return a sampled navmesh point within the supplied ring
     public static bool TryGetPosition(
         Vector3 center,
         float minDistance,

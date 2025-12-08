@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Simple clamp that keeps the player within a square centered on mapCenter
+// simple clamp that keeps the player within a square centered on map center
 public class MapBoundaryChecker : MonoBehaviour
 {
     [Header("Boundary Settings")]
@@ -11,6 +11,7 @@ public class MapBoundaryChecker : MonoBehaviour
     private Transform playerTransform;
     private UnityEngine.AI.NavMeshAgent playerAgent;
 
+    // validates attachment and caches references
     void Start()
     {
         if (!transform.CompareTag("Player"))
@@ -24,6 +25,7 @@ public class MapBoundaryChecker : MonoBehaviour
         playerAgent = GetComponent<UnityEngine.AI.NavMeshAgent>();
     }
 
+    // clamps the player position each frame
     void Update()
     {
         if (playerTransform == null)
@@ -34,6 +36,7 @@ public class MapBoundaryChecker : MonoBehaviour
         ClampPosition();
     }
 
+    // constrains the player within the configured rectangle
     void ClampPosition()
     {
         Vector3 pos = playerTransform.position;
@@ -57,6 +60,7 @@ public class MapBoundaryChecker : MonoBehaviour
         }
     }
 
+    // draws the boundary square for debugging
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

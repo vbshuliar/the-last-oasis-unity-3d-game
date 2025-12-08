@@ -1,8 +1,6 @@
 using UnityEngine;
 
-/// <summary>
-/// Spawns the boss a set time after gameplay starts, ensuring it appears far from the arena center.
-/// </summary>
+// spawns the boss after a delay and ensures the position offsets from center
 public class BossSpawner : MonoBehaviour
 {
     [Header("Boss Settings")]
@@ -18,16 +16,19 @@ public class BossSpawner : MonoBehaviour
     private bool bossSpawned = false;
     private float elapsedTime = 0f;
 
+    // prepares tracking when the spawner becomes active
     void OnEnable()
     {
         ResetSpawner();
     }
 
+    // resets tracking when the spawner is disabled
     void OnDisable()
     {
         ResetSpawner();
     }
 
+    // counts up time and spawns the boss once the delay elapses
     void Update()
     {
         if (bossSpawned || GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.Playing)
@@ -42,6 +43,7 @@ public class BossSpawner : MonoBehaviour
         }
     }
 
+    // instantiates the boss prefab at a valid navmesh position
     void SpawnBoss()
     {
         if (bossPrefab == null)
@@ -60,6 +62,7 @@ public class BossSpawner : MonoBehaviour
         bossSpawned = true;
     }
 
+    // returns the configured spawn center or world origin
     Vector3 GetCenter()
     {
         if (spawnCenter != null)
@@ -70,6 +73,7 @@ public class BossSpawner : MonoBehaviour
         return Vector3.zero;
     }
 
+    // clears internal timers to allow another boss spawn
     public void ResetSpawner()
     {
         bossSpawned = false;

@@ -23,12 +23,13 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] private string level2SceneName = "Level2";
     [SerializeField] private string tutorialSceneName = "Tutorial";
 
+    // ensures required ui systems exist and wires button callbacks
     void Start()
     {
-        // Ensure EventSystem exists
+        // ensure eventsystem exists
         EnsureEventSystem();
 
-        // Verify and setup buttons
+        // verify and set up buttons
         SetupButton(startLevel1Button, OnStartLevel1Clicked, "Start Level 1");
         SetupButton(startLevel2Button, OnStartLevel2Clicked, "Start Level 2");
         SetupButton(tutorialButton, OnTutorialClicked, "Tutorial");
@@ -39,6 +40,7 @@ public class MainMenuController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    // verifies the scene contains an eventsystem and usable canvas
     void EnsureEventSystem()
     {
         // check if eventsystem exists in the scene (needed for button clicks)
@@ -70,6 +72,7 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    // ensures the button is active, interactable, and assigned
     void SetupButton(Button button, UnityEngine.Events.UnityAction action, string buttonName)
     {
         if (button == null)
@@ -78,14 +81,14 @@ public class MainMenuController : MonoBehaviour
             return;
         }
 
-        // Ensure button is interactable
+        // ensure button is interactable
         if (!button.interactable)
         {
             Debug.LogWarning($"MainMenuController: {buttonName} button is not interactable! Enabling it...");
             button.interactable = true;
         }
 
-        // Ensure button GameObject is active
+        // ensure button gameobject is active
         if (!button.gameObject.activeInHierarchy)
         {
             Debug.LogWarning($"MainMenuController: {buttonName} button GameObject is inactive! Activating it...");
@@ -101,6 +104,7 @@ public class MainMenuController : MonoBehaviour
         Debug.Log($"MainMenuController: {buttonName} button listener added successfully. Button is interactable: {button.interactable}, Active: {button.gameObject.activeInHierarchy}");
     }
 
+    // plays a button click sfx when any menu button is pressed
     void PlayButtonSound()
     {
         if (AudioManager.Instance != null)
@@ -109,6 +113,7 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    // loads the first level scene
     public void OnStartLevel1Clicked()
     {
         Debug.Log("MainMenuController: OnStartLevel1Clicked called!");
@@ -122,6 +127,7 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    // loads the second level scene
     public void OnStartLevel2Clicked()
     {
         Debug.Log("MainMenuController: OnStartLevel2Clicked called!");
@@ -135,6 +141,7 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    // loads the tutorial scene
     public void OnTutorialClicked()
     {
         Debug.Log("MainMenuController: OnTutorialClicked called!");
@@ -148,6 +155,7 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    // opens the options panel for configuration
     public void OnOptionsClicked()
     {
         Debug.Log("MainMenuController: OnOptionsClicked called!");
@@ -161,6 +169,7 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    // loads saved progress if a save file exists
     public void OnLoadGameClicked()
     {
         Debug.Log("MainMenuController: OnLoadGameClicked called!");
@@ -174,6 +183,7 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    // exits play mode or the standalone build
     public void OnQuitClicked()
     {
         Debug.Log("MainMenuController: OnQuitClicked called!");
@@ -184,6 +194,7 @@ public class MainMenuController : MonoBehaviour
 #endif
     }
 
+    // removes button listeners when the controller is destroyed
     void OnDestroy()
     {
         if (startLevel1Button != null)

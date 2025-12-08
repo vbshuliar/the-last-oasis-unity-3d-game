@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
     float currentDamageMultiplier = 1f;
     Coroutine damageBoostCoroutine;
 
+    // caches movement components and initializes the input wrapper
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -54,6 +55,7 @@ public class PlayerController : MonoBehaviour
         input = new CustomActions();
     }
 
+    // gathers animation timings, hooks events, and starts the game
     void Start()
     {
         // loop through all animations to find attack animation length
@@ -99,6 +101,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // informs the game manager about player death
     void OnPlayerDeath(Actor deadActor)
     {
         if (GameManager.Instance != null)
@@ -107,6 +110,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // raycasts into the world to decide whether to walk or interact
     void ClickToMove()
     {
         // raycast shoots invisible line from camera through mouse position to see what was clicked
@@ -130,12 +134,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // enables the gameplay input map
     void OnEnable()
     { input.Enable(); }
 
+    // disables the gameplay input map
     void OnDisable()
     { input.Disable(); }
 
+    // handles per frame movement, targeting, and animation control
     void Update()
     {
         if (actor != null && !actor.IsAlive())
@@ -150,6 +157,7 @@ public class PlayerController : MonoBehaviour
         SetAnimations();
     }
 
+    // manages click to move repeated raycasts from mouse input
     void HandleMouseInput()
     {
         if (Mouse.current == null) return;
@@ -170,6 +178,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // navigates toward the current interactable target
     void FollowTarget()
     {
         if (target == null) return;
@@ -180,6 +189,7 @@ public class PlayerController : MonoBehaviour
         { agent.SetDestination(target.transform.position); }
     }
 
+    // computes a facing vector and rotates toward it smoothly
     void FaceTarget()
     {
         Vector3 facing = Vector3.zero;
@@ -211,6 +221,7 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * lookRotationSpeed);
     }
 
+    // handles what happens once the player reaches the target
     void ReachDistance()
     {
         agent.SetDestination(transform.position);
@@ -241,6 +252,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // applies damage and vfx to the current enemy target
     void SendAttack()
     {
         if (target == null) return;
@@ -259,6 +271,7 @@ public class PlayerController : MonoBehaviour
         target.GetComponent<Actor>().TakeDamage(finalDamage);
     }
 
+    // allows new actions after an attack or pickup completes
     void ResetBusyState()
     {
         playerBusy = false;
@@ -266,6 +279,7 @@ public class PlayerController : MonoBehaviour
         SetAnimations();
     }
 
+    // swaps between idle and walk clips based on velocity
     void SetAnimations()
     {
         if (playerBusy) return;
@@ -276,6 +290,7 @@ public class PlayerController : MonoBehaviour
         { animator.Play(IDLE); }
     }
 
+    // begins the coroutine that temporarily scales and speeds up the player
     public void ApplyGreenPotionEffect(float sizeMultiplier, float speedMultiplier, float duration)
     {
         if (isPoweredUp)
@@ -286,6 +301,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(PowerUpCoroutine(sizeMultiplier, speedMultiplier, duration));
     }
 
+    // boosts damage output for the provided duration
     public void ApplyDamageBoost(float damageMultiplier, float duration)
     {
         if (damageBoostCoroutine != null)
@@ -312,6 +328,7 @@ public class PlayerController : MonoBehaviour
         isPoweredUp = false;
     }
 
+    // temporarily increases the attack damage multiplier
     IEnumerator DamageBoostCoroutine(float damageMultiplier, float duration)
     {
         currentDamageMultiplier = damageMultiplier;
@@ -322,6 +339,7 @@ public class PlayerController : MonoBehaviour
         damageBoostCoroutine = null;
     }
 
+    // unsubscribes from events when this controller goes away
     void OnDestroy()
     {
         if (actor != null)

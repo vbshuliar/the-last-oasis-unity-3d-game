@@ -56,6 +56,7 @@ public class GameManager : MonoBehaviour
     public event Action OnGamePaused;
     public event Action OnGameResumed;
 
+    // initializes the singleton instance and loads saved settings
     void Awake()
     {
         if (Instance == null)
@@ -73,6 +74,7 @@ public class GameManager : MonoBehaviour
         LoadSettings();
     }
 
+    // counts down the timer whenever the game is running
     void Update()
     {
         if (CurrentState == GameState.Playing && gameStarted)
@@ -81,9 +83,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // decrements the remaining time and fires victory when it runs out
     void UpdateTimer()
     {
-        // deltaTime is time since last frame, subtract it from remaining time
+        // delta time is time since last frame, subtract it from remaining time
         timeRemaining -= Time.deltaTime;
         timeRemaining = Mathf.Max(0f, timeRemaining); // never expose negative time
 
@@ -96,25 +99,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // listens for escape key presses to toggle pause state
     void HandlePauseInput()
     {
-        // Only handle pause input when playing - let PauseMenuController handle resume
+        // only handle pause input when playing - let pausemenucontroller handle resume
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (CurrentState == GameState.Playing)
             {
                 PauseGame();
             }
-            // Don't handle ESC when paused - PauseMenuController will handle it
+            // don't handle esc when paused - pausemenucontroller will handle it
         }
     }
 
+    // resets score counters and begins the play session
     public void StartGame()
     {
         bool restoringFromSave = SaveSystem.Instance != null && SaveSystem.Instance.IsRestoringSave;
         if (restoringFromSave)
         {
-            // Skip reset when a save load is about to reapply state.
+            // skip reset when a save load is about to reapply state.
             return;
         }
         CurrentState = GameState.Playing;
@@ -130,6 +135,7 @@ public class GameManager : MonoBehaviour
         OnItemsCollectedUpdated?.Invoke(itemsCollected);
     }
 
+    // restores state values copied from disk
     public void ApplyLoadedGameData(GameData data)
     {
         if (data == null)
@@ -153,34 +159,38 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    // switches the state to paused and freezes time
     public void PauseGame()
     {
         if (CurrentState == GameState.Playing)
         {
             CurrentState = GameState.Paused;
-            // timeScale 0 stops all time-based things (animations, movement, etc)
+            // time scale zero stops all time based things (animations, movement, etc)
             Time.timeScale = 0f;
             OnGamePaused?.Invoke();
         }
     }
 
+    // resumes normal gameplay after a pause
     public void ResumeGame()
     {
         if (CurrentState == GameState.Paused)
         {
             CurrentState = GameState.Playing;
-            // timeScale 1 means normal speed
+            // time scale one means normal speed
             Time.timeScale = 1f;
             OnGameResumed?.Invoke();
         }
     }
 
+    // reloads the active scene for a fresh attempt
     public void RestartGame()
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    // transitions into the game over state and saves high score data
     public void GameOver()
     {
         if (CurrentState == GameState.Playing)
@@ -192,6 +202,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // transitions into the victory state when time expires
     public void TriggerVictory()
     {
         if (CurrentState == GameState.Playing)
@@ -203,6 +214,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // increments kill count and awards score
     public void AddKill()
     {
         enemiesKilled++;
@@ -211,6 +223,7 @@ public class GameManager : MonoBehaviour
         OnKillsUpdated?.Invoke(enemiesKilled);
     }
 
+    // increments item count and awards score
     public void AddItemCollected()
     {
         itemsCollected++;
@@ -219,56 +232,66 @@ public class GameManager : MonoBehaviour
         OnItemsCollectedUpdated?.Invoke(itemsCollected);
     }
 
+    // applies difficulty multipliers before increasing score
     public void AddScore(int points)
     {
-        // multiply points by difficulty level (easy=1x, medium=2x, hard=3x)
+        // multiply points by difficulty level (easy 1x, medium 2x, hard 3x)
         float multiplier = GetCurrentScoreMultiplier();
         int finalPoints = Mathf.RoundToInt(points * multiplier);
         currentScore += finalPoints;
         OnScoreUpdated?.Invoke(currentScore);
     }
 
+    // stores the newly selected difficulty and persists it
     public void SetDifficulty(Difficulty difficulty)
     {
         currentDifficulty = difficulty;
         SaveSettings();
     }
 
+    // exposes the active difficulty level
     public Difficulty GetDifficulty()
     {
         return currentDifficulty;
     }
 
+    // returns the remaining round time in seconds
     public float GetTimeRemaining()
     {
         return timeRemaining;
     }
 
+    // returns the player's current score
     public int GetCurrentScore()
     {
         return currentScore;
     }
 
+    // returns the number of enemies eliminated
     public int GetEnemiesKilled()
     {
         return enemiesKilled;
     }
 
+    // returns the number of items collected
     public int GetItemsCollected()
     {
         return itemsCollected;
     }
 
+    // helper for ui elements needing the score multiplier
     public float GetDifficultyMultiplier()
     {
         return GetCurrentScoreMultiplier();
     }
 
+    // exposes the fixed game duration in seconds
     public float GetGameDuration()
     {
         return GameDurationSeconds;
     }
 
+    // returns the multiplier from the current difficulty profile
     public float GetCurrentScoreMultiplier()
     {
         DifficultySettings settings = GetCurrentDifficultySettings();
@@ -280,11 +303,13 @@ public class GameManager : MonoBehaviour
         return settings.scoreMultiplier;
     }
 
+    // grabs the active difficulty settings asset
     public DifficultySettings GetCurrentDifficultySettings()
     {
         return GetDifficultySettings(currentDifficulty);
     }
 
+    // maps difficulties to their respective settings assets
     public DifficultySettings GetDifficultySettings(Difficulty difficulty)
     {
         switch (difficulty)
@@ -300,6 +325,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // uses difficulty to determine the player's max health
     public int GetPlayerMaxHealth(int baseMaxHealth)
     {
         DifficultySettings settings = GetCurrentDifficultySettings();
@@ -311,6 +337,7 @@ public class GameManager : MonoBehaviour
         return Mathf.Max(1, adjusted);
     }
 
+    // applies health adjustments to the player actor
     public void ApplyDifficultyToPlayer(Actor playerActor, int baseMaxHealth)
     {
         if (playerActor == null)
@@ -323,13 +350,15 @@ public class GameManager : MonoBehaviour
         playerActor.Heal(adjustedHealth);
     }
 
+    // saves current difficulty to player prefs
     void SaveSettings()
     {
-        // playerprefs saves data that persists between game sessions
+        // player prefs saves data that persists between game sessions
         PlayerPrefs.SetInt("Difficulty", (int)currentDifficulty);
         PlayerPrefs.Save();
     }
 
+    // restores previously saved difficulty, if any
     void LoadSettings()
     {
         // load saved difficulty if it exists
@@ -339,6 +368,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // writes a new high score to player prefs when appropriate
     void SaveHighScore()
     {
         int highScore = PlayerPrefs.GetInt("HighScore", 0);
@@ -349,11 +379,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // returns the saved high score value
     public int GetHighScore()
     {
         return PlayerPrefs.GetInt("HighScore", 0);
     }
 
+    // ensures time scale is restored if the manager is destroyed
     void OnDestroy()
     {
         Time.timeScale = 1f;

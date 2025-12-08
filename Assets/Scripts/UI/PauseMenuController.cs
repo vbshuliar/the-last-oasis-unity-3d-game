@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+// shows the pause menu and routes button presses to the right actions
 public class PauseMenuController : MonoBehaviour
 {
     [Header("UI Elements")]
@@ -18,18 +19,19 @@ public class PauseMenuController : MonoBehaviour
 
     private bool isPaused = false;
 
+    // ensures ui prerequisites exist and wires up the buttons
     void Start()
     {
-        // Ensure EventSystem exists
+        // ensure eventsystem exists
         EnsureEventSystem();
 
-        // Hide pause menu initially
+        // hide pause menu initially
         if (pauseMenuPanel != null)
         {
             pauseMenuPanel.SetActive(false);
         }
 
-        // Setup button listeners
+        // set up button listeners
         SetupButton(resumeButton, ResumeGame, "Resume");
         SetupButton(restartButton, RestartGame, "Restart");
         SetupButton(mainMenuButton, GoToMainMenu, "Main Menu");
@@ -37,6 +39,7 @@ public class PauseMenuController : MonoBehaviour
         SetupButton(saveGameButton, SaveGame, "Save Game");
     }
 
+    // creates an eventsystem if none exists so buttons can work
     void EnsureEventSystem()
     {
         // check if eventsystem exists in the scene (needed for button clicks)
@@ -49,6 +52,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // ensures a button is interactable and hooks up actions plus sounds
     void SetupButton(Button button, UnityEngine.Events.UnityAction action, string buttonName)
     {
         if (button == null)
@@ -57,7 +61,7 @@ public class PauseMenuController : MonoBehaviour
             return;
         }
 
-        // Ensure button is interactable
+        // ensure button is interactable
         if (!button.interactable)
         {
             Debug.LogWarning($"PauseMenuController: {buttonName} button is not interactable! Enabling it...");
@@ -73,6 +77,7 @@ public class PauseMenuController : MonoBehaviour
         Debug.Log($"PauseMenuController: {buttonName} button listener added successfully. Button is interactable: {button.interactable}");
     }
 
+    // plays ui audio feedback when a pause button is clicked
     void PlayButtonSound()
     {
         if (AudioManager.Instance != null)
@@ -81,6 +86,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // listens for escape presses to toggle pause state
     void Update()
     {
         if (GameManager.Instance == null || Input.GetKeyDown(KeyCode.Escape) == false)
@@ -100,6 +106,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // pauses the game and reveals the menu
     public void PauseGame()
     {
         if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Playing)
@@ -110,6 +117,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // resumes gameplay and hides the menu
     public void ResumeGame()
     {
         Debug.Log("PauseMenuController: ResumeGame called!");
@@ -121,6 +129,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // reloads the active scene from the pause menu
     public void RestartGame()
     {
         Debug.Log("PauseMenuController: RestartGame called!");
@@ -135,6 +144,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // navigates back to the main menu scene
     public void GoToMainMenu()
     {
         Debug.Log("PauseMenuController: GoToMainMenu called!");
@@ -150,6 +160,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // quits the application or editor play mode
     public void QuitGame()
     {
         Debug.Log("PauseMenuController: QuitGame called!");
@@ -160,6 +171,7 @@ public class PauseMenuController : MonoBehaviour
 #endif
     }
 
+    // passes the save request to the save system singleton
     public void SaveGame()
     {
         Debug.Log("PauseMenuController: SaveGame called!");
@@ -173,6 +185,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // activates the pause menu gameobject
     void ShowPauseMenu()
     {
         if (pauseMenuPanel != null)
@@ -181,6 +194,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // hides the pause menu gameobject
     void HidePauseMenu()
     {
         if (pauseMenuPanel != null)
@@ -189,6 +203,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // subscribes to game manager pause events when enabled
     void OnEnable()
     {
         if (GameManager.Instance != null)
@@ -198,6 +213,7 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // unsubscribes from pause events when disabled
     void OnDisable()
     {
         if (GameManager.Instance != null)
@@ -207,9 +223,10 @@ public class PauseMenuController : MonoBehaviour
         }
     }
 
+    // cleans up button listeners when destroyed
     void OnDestroy()
     {
-        // Clean up button listeners
+        // clean up button listeners
         if (resumeButton != null)
         {
             resumeButton.onClick.RemoveAllListeners();

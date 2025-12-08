@@ -1,5 +1,6 @@
 using UnityEngine;
 
+// samples several rays forward to create avoidance steering forces
 public class ObstacleAvoidanceBehaviour : SteeringBehaviour
 {
     [Header("Obstacle Avoidance Settings")]
@@ -9,6 +10,7 @@ public class ObstacleAvoidanceBehaviour : SteeringBehaviour
 
     private Rigidbody rb;
 
+    // prepares rigidbody data and default layers if none were assigned
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -24,12 +26,13 @@ public class ObstacleAvoidanceBehaviour : SteeringBehaviour
         }
     }
 
+    // computes the summed avoidance force from raycast hits
     public override Vector3 CalculateForce()
     {
         Vector3 forward = transform.forward;
         Vector3 avoidanceForceVector = Vector3.zero;
 
-        // Cast rays in multiple directions
+        // cast rays in multiple directions
         Vector3[] rayDirections = new Vector3[]
         {
             forward,
@@ -44,16 +47,16 @@ public class ObstacleAvoidanceBehaviour : SteeringBehaviour
             RaycastHit hit;
             if (Physics.Raycast(transform.position, direction, out hit, lookAheadDistance, obstacleLayer))
             {
-                // Calculate avoidance force
+                // calculate avoidance force
                 Vector3 avoidanceDirection = (transform.position - hit.point).normalized;
                 float distance = hit.distance;
                 float forceStrength = avoidanceForce * (1f - (distance / lookAheadDistance));
-                
+
                 avoidanceForceVector += avoidanceDirection * forceStrength;
             }
         }
 
-        // Limit avoidance force
+        // limit avoidance force
         avoidanceForceVector = Vector3.ClampMagnitude(avoidanceForceVector, maxForce);
 
         return avoidanceForceVector * weight;

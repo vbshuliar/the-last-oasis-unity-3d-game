@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-// boss-specific AI that mirrors the original pursuit-and-attack behaviour
+// boss-specific ai that mirrors the original pursuit and attack behaviour
 public class BossAI : MonoBehaviour
 {
     const string IDLE = "Idle";
@@ -28,6 +28,7 @@ public class BossAI : MonoBehaviour
     float attackAnimationLength = 0f;
     float lastAttackTime = 0f;
 
+    // caches components needed for combat and movement
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -35,6 +36,7 @@ public class BossAI : MonoBehaviour
         actor = GetComponent<Actor>();
     }
 
+    // finds the player, animation timing, and death hooks
     void Start()
     {
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -67,6 +69,7 @@ public class BossAI : MonoBehaviour
         }
     }
 
+    // notifies the game manager when this boss dies
     void OnBossDeath(Actor deadActor)
     {
         if (GameManager.Instance != null)
@@ -75,6 +78,7 @@ public class BossAI : MonoBehaviour
         }
     }
 
+    // handles pursuit, attacking, and animation updates each frame
     void Update()
     {
         if (player == null || actor == null || !actor.IsAlive()) return;
@@ -99,6 +103,7 @@ public class BossAI : MonoBehaviour
         SetAnimations();
     }
 
+    // rotates smoothly to look at the player
     void FacePlayer()
     {
         Vector3 direction = (player.position - transform.position).normalized;
@@ -111,6 +116,7 @@ public class BossAI : MonoBehaviour
         }
     }
 
+    // starts an attack if the cooldown has elapsed
     void TryAttack()
     {
         if (isAttacking) return;
@@ -134,6 +140,7 @@ public class BossAI : MonoBehaviour
         Invoke(nameof(ResetAttack), attackDuration);
     }
 
+    // applies damage and hit feedback when the swing connects
     void DealDamage()
     {
         if (player == null) return;
@@ -160,6 +167,7 @@ public class BossAI : MonoBehaviour
         }
     }
 
+    // clears the attacking flag and restores animator speed
     void ResetAttack()
     {
         isAttacking = false;
@@ -169,6 +177,7 @@ public class BossAI : MonoBehaviour
         }
     }
 
+    // plays idle or walk clips depending on velocity
     void SetAnimations()
     {
         if (animator == null) return;
@@ -184,6 +193,7 @@ public class BossAI : MonoBehaviour
         }
     }
 
+    // shows detection and attack ranges in the editor
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
@@ -193,6 +203,7 @@ public class BossAI : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 
+    // unsubscribes from events when destroyed
     void OnDestroy()
     {
         if (actor != null)

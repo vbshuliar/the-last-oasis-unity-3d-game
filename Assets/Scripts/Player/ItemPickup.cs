@@ -25,16 +25,19 @@ public class ItemPickup : MonoBehaviour
 
     bool hasBeenCollected = false;
 
+    // sets up the collider when the component is reset in the editor
     void Reset()
     {
         EnsureTriggerCollider();
     }
 
+    // ensures the collider is configured for trigger detection
     void Awake()
     {
         EnsureTriggerCollider();
     }
 
+    // toggles the collider to trigger mode if needed
     void EnsureTriggerCollider()
     {
         Collider col = GetComponent<Collider>();
@@ -44,6 +47,7 @@ public class ItemPickup : MonoBehaviour
         }
     }
 
+    // detects the player entering the trigger and begins collection
     void OnTriggerEnter(Collider other)
     {
         if (hasBeenCollected)
@@ -70,6 +74,7 @@ public class ItemPickup : MonoBehaviour
         Collect(player);
     }
 
+    // marks the pickup as collected and applies its effect
     void Collect(PlayerController player)
     {
         hasBeenCollected = true;
@@ -83,6 +88,7 @@ public class ItemPickup : MonoBehaviour
         Destroy(gameObject);
     }
 
+    // applies the configured effect type to the player controller
     public void ApplyEffect(PlayerController player)
     {
         switch (itemType)
@@ -109,7 +115,7 @@ public class ItemPickup : MonoBehaviour
                 ApplyDamageBoost(player);
                 break;
             case ItemType.Star:
-                // Star only gives +50 score, doesn't count as regular item collected
+                // star only gives +50 score, doesn't count as regular item collected
                 ApplyStar(player);
                 break;
             default:
@@ -118,12 +124,13 @@ public class ItemPickup : MonoBehaviour
         }
     }
 
+    // restores the player's health toward the configured amount
     void ApplyHealthPack(PlayerController player)
     {
         Actor playerActor = player.GetComponent<Actor>();
         if (playerActor != null)
         {
-            // Restore full health up to configured cap (default 15)
+            // restore full health up to configured cap (default 15)
             int targetHealth = healAmount > 0 ? healAmount : playerActor.maxHealth;
             int amountToHeal = targetHealth - playerActor.currentHealth;
             if (amountToHeal > 0)
@@ -133,19 +140,22 @@ public class ItemPickup : MonoBehaviour
         }
     }
 
+    // boosts movement speed temporarily
     void ApplySpeedBoost(PlayerController player)
     {
         player.ApplyGreenPotionEffect(1f, speedBoostMultiplier, speedBoostDuration);
     }
 
+    // increases attack damage for the provided duration
     void ApplyDamageBoost(PlayerController player)
     {
         player.ApplyDamageBoost(damageBoostMultiplier, damageBoostDuration);
     }
 
+    // adds bonus score without counting as a normal pickup
     void ApplyStar(PlayerController player)
     {
-        // Star gives +50 score
+        // star gives +50 score
         if (GameManager.Instance != null)
         {
             GameManager.Instance.AddScore(50);
